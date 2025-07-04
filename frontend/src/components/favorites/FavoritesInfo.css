@@ -1,0 +1,167 @@
+.favorites-container {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    max-width: 720px;
+    /* tək sütun üçün biraz kiçik maksimum en */
+    margin: 0 auto;
+    padding: 20px;
+    background: #f9fafb;
+}
+
+.favorites-title {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2.5rem;
+    color: #222;
+}
+
+/* İki sütunlu grid (2 card / sətir) */
+.favorites-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px 30px;
+    justify-content: center;
+}
+
+.fav-card {
+    background: white;
+    border-radius: 10px;
+    padding: 30px 20px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+    cursor: default;
+    width: 320px;
+    display: flex;
+    align-items: center;
+    /* Şaquli ortala */
+    justify-content: center;
+    /* Üfüqi ortala */
+    text-align: center;
+    /* Mətinləri ortala */
+    height: 320px;
+    /* Sabit hündürlük */
+    flex-direction: column;
+}
+
+.fav-card:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.fav-info h3 {
+    margin: 0 0 12px;
+    color: #222;
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+.fav-info .company {
+    color: #555;
+    font-weight: 600;
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+}
+
+.fav-info p {
+    margin: 6px 0;
+    color: #333;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.salary {
+    font-weight: 700;
+    color: #2a9d8f;
+}
+
+.posted {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+    margin-right: auto;
+    width: fit-content;
+}
+
+.details-btn {
+    margin-top: 18px;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 22px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    align-self: center;
+    min-width: 140px;
+}
+
+.details-btn:hover {
+    background-color: #2563eb;
+}
+
+.no-favorites {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #777;
+    grid-column: 1 / -1;
+}
+
+/* Responsive (mobil üçün 1 sütun) */
+@media (max-width: 720px) {
+    .favorites-grid {
+        grid-template-columns: 1fr;
+        max-width: 100%;
+        gap: 20px;
+    }
+
+    .fav-card {
+        width: 100%;
+        height: auto;
+        padding: 20px;
+    }
+}
+
+.posted {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    text-align: center;
+}
+
+.fav-info {
+    text-align: center;
+}
+
+.fav-card {
+    position: relative;
+    border: 1px solid #ddd;
+    padding: 16px;
+    margin-bottom: 16px;
+    border-radius: 8px;
+    background: white;
+}
+
+.remove-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #888;
+    font-size: 18px;
+    transition: color 0.3s ease;
+}
+
+.remove-btn:hover {
+    color: red;
+}

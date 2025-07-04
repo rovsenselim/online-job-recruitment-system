@@ -1,0 +1,324 @@
+/* ======= Navbar ======= */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 40px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-logo a {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.nav-logo a span {
+    color: #ff6600;
+}
+
+.navlist {
+    display: flex;
+    list-style: none;
+    gap: 40px;
+}
+
+.navlist li a {
+    color: #333;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.navlist li a:hover {
+    color: #007bff;
+}
+
+.actions {
+    display: flex;
+    gap: 15px;
+}
+
+.icon-btn {
+    background-color: #f0f4ff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+}
+
+.icon-btn:hover {
+    background-color: #dbe8ff;
+    color: #007bff;
+}
+
+.icon-btn span {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* ======= Hero Section ======= */
+.hero-section {
+    height: 450px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    transition: background-image 1s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.overlay {
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.1));
+    backdrop-filter: blur(2px);
+    width: 100%;
+    height: 100%;
+    padding-left: 5%;
+    display: flex;
+    align-items: center;
+}
+
+.hero-content {
+    color: #fff;
+    max-width: 500px;
+    animation: fadeIn 1.5s ease;
+}
+
+.hero-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.8rem;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.hero-content p {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+}
+
+.job-search {
+    padding: 0.9rem 1rem;
+    width: 90%;
+    max-width: 360px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 10px;
+    outline: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ======= Content Section ======= */
+.homecard-container {
+    display: flex;
+    gap: 30px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.filter-panel {
+    width: 280px;
+    padding-right: 20px;
+    border-right: 1px solid #ddd;
+}
+
+.cards-panel {
+    flex: 1;
+}
+
+.home-job-card {
+    display: flex;
+    gap: 15px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+    padding: 12px;
+    cursor: pointer;
+    align-items: center;
+    transition: box-shadow 0.3s ease;
+}
+
+.home-job-card:hover {
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.home-job-img img {
+    width: 120px;
+    height: 80px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.home-job-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.job-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    color: #222;
+}
+
+.heart-icon {
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    filter: grayscale(1);
+    transition: filter 0.3s ease;
+}
+
+.heart-icon:hover {
+    filter: grayscale(0);
+}
+
+.job-company {
+    color: #555;
+    font-weight: 500;
+}
+
+.job-salary {
+    font-weight: 700;
+    color: #2a9d8f;
+}
+
+.job-tags {
+    display: flex;
+    gap: 10px;
+}
+
+.tag {
+    background-color: #e0f7f1;
+    color: #2a9d8f;
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* Filter Style */
+.filter-wrapper h3 {
+    margin-bottom: 20px;
+    color: #2a9d8f;
+    font-size: 20px;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.filter-group label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.filter-group select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: #f9fafb;
+}
+
+.reset-btn {
+    margin-top: 20px;
+    padding: 10px;
+    width: 100%;
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.reset-btn:hover {
+    background-color: #dc2626;
+}
+
+.heart-icon {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 22px;
+    cursor: pointer;
+    color: gray;
+    transition: color 0.3s ease;
+}
+
+.heart-icon.favorited {
+    color: red;
+}
+
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 1.8rem;
+    }
+
+    .hero-content {
+        text-align: center;
+        padding: 0 10px;
+    }
+
+    .overlay {
+        justify-content: center;
+        padding-left: 0;
+    }
+
+    .homecard-container {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .filter-panel {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+    }
+
+    .cards-panel {
+        width: 100%;
+    }
+}

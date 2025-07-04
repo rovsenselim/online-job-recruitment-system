@@ -1,0 +1,78 @@
+.smart-section {
+    max-width: 1200px;
+    margin: 100px auto;
+    padding: 60px 20px;
+    font-family: 'Segoe UI', sans-serif;
+    position: relative;
+    background: linear-gradient(to bottom, #f1f5f9 0%, white 100%);
+    border-top: 3px solid #e2e8f0;
+    border-bottom: 3px solid #e2e8f0;
+}
+
+.smart-main-title {
+    text-align: center;
+    font-size: 34px;
+    font-weight: 700;
+    margin-bottom: 70px;
+    color: #0f172a;
+    position: relative;
+}
+
+.smart-part {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 50px;
+    margin-bottom: 70px;
+    background-color: #ffffff;
+    padding: 45px 35px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.smart-part:hover {
+    transform: translateY(-6px);
+}
+
+.smart-part.reverse {
+    flex-direction: row-reverse;
+}
+
+.smart-img img {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 6px solid #cbd5e1;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+.smart-text {
+    flex: 1;
+}
+
+.smart-text h3 {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 18px;
+    color: #1e293b;
+}
+
+.smart-text p {
+    font-size: 17px;
+    color: #475569;
+    line-height: 1.8;
+}
+
+@media (max-width: 992px) {
+    .smart-part {
+        flex-direction: column;
+        text-align: center;
+        padding: 30px 20px;
+    }
+
+    .smart-img img {
+        margin-bottom: 20px;
+    }
+}

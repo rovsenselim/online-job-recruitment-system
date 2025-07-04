@@ -1,0 +1,359 @@
+/* === HERO SECTION === */
+.hero-section {
+    position: relative;
+    height: 350px;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    color: white;
+    text-align: center;
+    padding: 0 20px;
+    max-width: 900px;
+    animation: fadeIn 1.2s ease forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+.job-search {
+    padding: 12px 16px;
+    width: 320px;
+    max-width: 100%;
+    border-radius: 8px;
+    border: none;
+    font-size: 1rem;
+    box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.job-search:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px #007bff;
+}
+
+/* === LAYOUT: FILTER + CARDS === */
+.homecard-container {
+    display: flex;
+    padding: 30px 20px;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* FILTER PANEL */
+.filter-panel {
+    flex: 0 0 280px;
+    background: #f7f7f7;
+    padding: 25px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgb(0 0 0 / 0.05);
+    height: fit-content;
+    position: sticky;
+    top: 90px;
+    /* stays visible on scroll */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.filter-panel h3 {
+    margin-bottom: 20px;
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: #333;
+}
+
+.filter-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #555;
+    font-size: 0.95rem;
+}
+
+.filter-group select,
+.filter-group input[type="range"] {
+    padding: 8px 12px;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    transition: border-color 0.3s ease;
+}
+
+.filter-group select:hover,
+.filter-group input[type="range"]:hover,
+.filter-group select:focus,
+.filter-group input[type="range"]:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.reset-btn {
+    margin-top: 10px;
+    width: 100%;
+    padding: 12px 0;
+    background-color: #dc3545;
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.reset-btn:hover {
+    background-color: #b02a37;
+}
+
+/* CARDS PANEL */
+.cards-panel {
+    flex-grow: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+/* JOB CARD */
+.home-job-card {
+    background: white;
+    padding: 18px 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgb(0 0 0 / 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+}
+
+.home-job-card:hover {
+    box-shadow: 0 12px 24px rgb(0 0 0 / 0.15);
+    transform: translateY(-4px);
+}
+
+.home-job-info-centered {
+    flex-grow: 1;
+}
+
+.job-title {
+    margin: 0 0 6px 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #222;
+    line-height: 1.2;
+}
+
+.job-company,
+.job-salary {
+    margin: 0 0 8px 0;
+    color: #666;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.job-salary {
+    margin-top: -6px;
+}
+
+.job-tags {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.tag {
+    background: #e1e1e1;
+    color: #444;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    user-select: none;
+}
+
+.icon-btn {
+    margin-top: 10px;
+    padding: 8px 18px;
+    border: none;
+    background: #007bff;
+    color: white;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.icon-btn:hover {
+    background: #0056b3;
+}
+
+.heart-icon {
+    font-size: 26px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    color: black;
+    margin-left: 15px;
+    user-select: none;
+    flex-shrink: 0;
+}
+
+.heart-icon.favorited {
+    color: #e63946;
+}
+
+/* RESPONSIVE */
+/* Medium screens (tablets, 768px and up) */
+@media (max-width: 991px) {
+    .homecard-container {
+        flex-direction: column;
+        padding: 20px 15px;
+    }
+
+    .filter-panel {
+        width: 100%;
+        position: relative;
+        top: 0;
+        margin-bottom: 25px;
+        box-shadow: none;
+        padding: 20px;
+    }
+
+    .cards-panel {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+    }
+
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+
+    .hero-content p {
+        font-size: 1.1rem;
+    }
+}
+
+/* Small screens (mobile, 480px and up) */
+@media (max-width: 575px) {
+    .hero-section {
+        height: 280px;
+    }
+
+    .hero-content h1 {
+        font-size: 1.6rem;
+    }
+
+    .job-search {
+        width: 100%;
+        font-size: 0.95rem;
+    }
+
+    .filter-panel {
+        padding: 15px;
+    }
+
+    .filter-group label {
+        font-size: 0.9rem;
+    }
+
+    .filter-group select,
+    .filter-group input[type="range"] {
+        font-size: 0.9rem;
+        padding: 6px 10px;
+    }
+
+    .reset-btn {
+        font-size: 0.9rem;
+        padding: 10px 0;
+    }
+
+    .job-title {
+        font-size: 1.1rem;
+    }
+
+    .job-company,
+    .job-salary {
+        font-size: 0.9rem;
+    }
+
+    .tag {
+        font-size: 0.75rem;
+        padding: 5px 10px;
+    }
+
+    .icon-btn {
+        font-size: 0.9rem;
+        padding: 7px 15px;
+    }
+
+    .heart-icon {
+        font-size: 22px;
+        margin-left: 10px;
+    }
+}
+
+/* Extra small screens (mobile phones, 320px and up) */
+@media (max-width: 375px) {
+    .hero-section {
+        height: 240px;
+    }
+
+    .hero-content h1 {
+        font-size: 1.4rem;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+    }
+
+    .job-search {
+        font-size: 0.9rem;
+        padding: 6px 10px;
+    }
+
+    .icon-btn {
+        font-size: 0.85rem;
+        padding: 6px 12px;
+    }
+}
