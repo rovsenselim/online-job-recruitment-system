@@ -26,7 +26,6 @@ This project was built to practice full-stack web development using modern techn
 1. Clone the repository
 
 
-
 ## Project Preview
 
 ### Landing Page
