@@ -27,25 +27,24 @@ This project was built to practice full-stack web development using modern techn
 
 
 
-
 ## Project Preview
 
 ### Landing Page
-![Landing Page](landing.png)
+![Landing Page](screenshots/landing.png)
 
 ### Register Page
-![Register Page](register.png)
+![Register Page](screenshots/register.png)
 
 ### Login Page
-![Login Page](login.png)
+![Login Page](screenshots/login.png)
 
 ### Home / Dashboard
-![Home](home.png)(home2.png)
+![Home](screenshots/home.png)
 
 ### Contact Page
-![Contact](contact.png)
+![Contact](screenshots/contact.png)
 
 ### Blog Page
-![Blog](blog.png)
+![Blog](screenshots/blog.png)
 ```bash
 git clone https://github.com/USERNAME/online-job-recruitment-system.git
