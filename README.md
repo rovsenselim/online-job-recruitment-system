@@ -41,9 +41,7 @@ This project was built to practice full-stack web development using modern techn
 ![Home](screenshots/home.png)
 
 ### Contact Page
-![Contact](screenshots/contact.png)
+![Contact Page](screenshots/contact.png)
 
 ### Blog Page
 ![Blog](screenshots/blog.png)
-```bash
-git clone https://github.com/USERNAME/online-job-recruitment-system.git
