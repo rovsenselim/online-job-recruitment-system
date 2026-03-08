@@ -25,5 +25,27 @@ This project was built to practice full-stack web development using modern techn
 
 1. Clone the repository
 
+
+
+
+## Project Preview
+
+### Landing Page
+![Landing Page](landing.png)
+
+### Register Page
+![Register Page](register.png)
+
+### Login Page
+![Login Page](login.png)
+
+### Home / Dashboard
+![Home](home.png)(home2.png)
+
+### Contact Page
+![Contact](contact.png)
+
+### Blog Page
+![Blog](blog.png)
 ```bash
 git clone https://github.com/USERNAME/online-job-recruitment-system.git
