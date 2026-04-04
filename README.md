@@ -37,11 +37,11 @@ This project was built to practice full-stack web development using modern techn
 ### Login Page
 ![Login Page](screenshots/login.png)
 
-### Home / Dashboard
-![Home](screenshots/home.png)
+### Home Page
+![Home Page](screenshots/home.png)
 
 ### Contact Page
 ![Contact Page](screenshots/contact.png)
 
 ### Blog Page
-![Blog](screenshots/blog.png)
+![Blog Page](screenshots/blog.png)
