@@ -30,15 +30,19 @@ function LoginPage() {
 
         try {
             const response = await API.post("/auth/login", formData, {
-                withCredentials: true, // Bura da yazmaq təhlükəsizdir, axios instance-da da var
+                withCredentials: true,
             });
 
-            dispatch(loginUser(response.data.user)); // Redux-da istifadəçi məlumatlarını saxla
+            const { user, token } = response.data;
+
+            // ✅ DÜZGÜN dispatch
+            dispatch(loginUser({ user, token }));
+
             toast.success("Uğurla daxil oldunuz");
 
-            if (response.data.user.role === "employee") {
+            if (user.role === "employee") {
                 navigate("/employee-home");
-            } else if (response.data.user.role === "employer") {
+            } else if (user.role === "employer") {
                 navigate("/employer-home");
             } else {
                 navigate("/");

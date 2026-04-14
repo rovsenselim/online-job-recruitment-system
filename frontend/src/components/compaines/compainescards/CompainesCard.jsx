@@ -12,40 +12,37 @@ const CompainesCards = () => {
         <div className="company-card-new">
           <div className="logo-circle">
             <img
-              src="https://upload.wikimedia.org/wikipedia/en/0/0d/Kapital_Bank_logo.png"
+              src="https://marsol.az/wp-content/uploads/2023/08/Kapital-logo-1.jpg"
               alt="Kapital Bank"
               className="company-logo"
             />
           </div>
           <h3>Kapital Bank</h3>
           <p className="desc">A leading bank offering digital financial solutions.</p>
-          <button className="btn-details">View Jobs</button>
         </div>
         {/* 2 */}
         <div className="company-card-new">
           <div className="logo-circle">
             <img
-              src="https://seeklogo.com/images/A/abb-australian-building-and-bridge-logo-5CDA556D5A-seeklogo.com.png"
+              src="https://abb-bank.az/storage/uploads/1625582479_logo-yaziile.png?v=1053"
               alt="ABB"
               className="company-logo"
             />
           </div>
           <h3>ABB</h3>
           <p className="desc">Engineering technologies and robotics leader.</p>
-          <button className="btn-details">View Jobs</button>
         </div>
         {/* 3 */}
         <div className="company-card-new">
           <div className="logo-circle">
             <img
-              src="https://upload.wikimedia.org/wikipedia/commons/1/13/Bank_Respublika_logo.svg"
+              src=""
               alt="Bank Respublika"
               className="company-logo"
             />
           </div>
           <h3>Bank Respublika</h3>
           <p className="desc">Reliable banking services across Azerbaijan.</p>
-          <button className="btn-details">View Jobs</button>
         </div>
         {/* 4 */}
         <div className="company-card-new">
@@ -58,20 +55,18 @@ const CompainesCards = () => {
           </div>
           <h3>Pasha Bank</h3>
           <p className="desc">Corporate banking excellence and innovation.</p>
-          <button className="btn-details">View Jobs</button>
         </div>
         {/* 5 */}
         <div className="company-card-new">
           <div className="logo-circle">
             <img
-              src="https://upload.wikimedia.org/wikipedia/commons/7/78/Unibank_logo.svg"
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZEcQMKb7YPZHZICgSNpDroTy_OcpQpAt1YQ&s"
               alt="Unibank"
               className="company-logo"
             />
           </div>
           <h3>Unibank</h3>
           <p className="desc">Modern digital banking for everyone.</p>
-          <button className="btn-details">View Jobs</button>
         </div>
         {/* 6 */}
         <div className="company-card-new">
@@ -84,7 +79,6 @@ const CompainesCards = () => {
           </div>
           <h3>SOCAR</h3>
           <p className="desc">State Oil Company of Azerbaijan Republic.</p>
-          <button className="btn-details">View Jobs</button>
         </div>
         {/* 7 */}
         <div className="company-card-new">
@@ -97,7 +91,6 @@ const CompainesCards = () => {
           </div>
           <h3>Azercell</h3>
           <p className="desc">Top mobile communication provider in Azerbaijan.</p>
-          <button className="btn-details">View Jobs</button>
         </div>
         {/* 8 */}
         <div className="company-card-new">
@@ -110,7 +103,6 @@ const CompainesCards = () => {
           </div>
           <h3>Nar</h3>
           <p className="desc">Affordable mobile solutions provider.</p>
-          <button className="btn-details">View Jobs</button>
         </div>
         {/* 9 */}
         <div className="company-card-new">
@@ -123,7 +115,6 @@ const CompainesCards = () => {
           </div>
           <h3>Bakcell</h3>
           <p className="desc">Largest mobile operator in Azerbaijan.</p>
-          <button className="btn-details">View Jobs</button>
         </div>
         {/* 10 */}
         <div className="company-card-new">
@@ -136,7 +127,6 @@ const CompainesCards = () => {
           </div>
           <h3>AzerGold</h3>
           <p className="desc">Mining and gold processing industry leader.</p>
-          <button className="btn-details">View Jobs</button>
         </div>
         {/* 11 */}
         <div className="company-card-new">
@@ -149,7 +139,6 @@ const CompainesCards = () => {
           </div>
           <h3>Azərişıq</h3>
           <p className="desc">Electric power distribution across Azerbaijan.</p>
-          <button className="btn-details">View Jobs</button>
         </div>
         {/* 12 */}
         <div className="company-card-new">
@@ -162,7 +151,6 @@ const CompainesCards = () => {
           </div>
           <h3>Azəristiliktəchizat</h3>
           <p className="desc">District heating and central services provider.</p>
-          <button className="btn-details">View Jobs</button>
         </div>
         {/* 13 */}
         <div className="company-card-new">
@@ -175,7 +163,6 @@ const CompainesCards = () => {
           </div>
           <h3>AzVirt</h3>
           <p className="desc">Cloud and hosting services provider.</p>
-          <button className="btn-details">View Jobs</button>
         </div>
         {/* 14 */}
         <div className="company-card-new">
@@ -188,7 +175,6 @@ const CompainesCards = () => {
           </div>
           <h3>Silk Way Group</h3>
           <p className="desc">Transportation and logistics giant.</p>
-          <button className="btn-details">View Jobs</button>
         </div>
         {/* 15 */}
         <div className="company-card-new">
@@ -201,7 +187,6 @@ const CompainesCards = () => {
           </div>
           <h3>Azpromo</h3>
           <p className="desc">State Agency for support of exports and investments.</p>
-          <button className="btn-details">View Jobs</button>
         </div>
         {/* 16 */}
         <div className="company-card-new">
@@ -214,7 +199,6 @@ const CompainesCards = () => {
           </div>
           <h3>Bravo Supermarket</h3>
           <p className="desc">Modern retail chain with wide assortment.</p>
-          <button className="btn-details">View Jobs</button>
         </div>
         {/* 17 */}
         <div className="company-card-new">
@@ -227,7 +211,6 @@ const CompainesCards = () => {
           </div>
           <h3>Rahat Supermarket</h3>
           <p className="desc">Nationwide grocery retailer.</p>
-          <button className="btn-details">View Jobs</button>
         </div>
         {/* 18 */}
         <div className="company-card-new">
@@ -240,7 +223,6 @@ const CompainesCards = () => {
           </div>
           <h3>Baku Steel Company</h3>
           <p className="desc">Steel production powerhouse of Azerbaijan.</p>
-          <button className="btn-details">View Jobs</button>
         </div>
         {/* 19 */}
         <div className="company-card-new">
@@ -253,7 +235,6 @@ const CompainesCards = () => {
           </div>
           <h3>Araz Supermarket</h3>
           <p className="desc">Grocery and household goods retailer.</p>
-          <button className="btn-details">View Jobs</button>
         </div>
         {/* 20 */}
         <div className="company-card-new">
@@ -266,7 +247,6 @@ const CompainesCards = () => {
           </div>
           <h3>AzLogistics</h3>
           <p className="desc">Smart logistics and supply chain services.</p>
-          <button className="btn-details">View Jobs</button>
         </div>
       </div>
     </section>

@@ -3,125 +3,235 @@
     height: 100vh;
     width: 100%;
     background-color: #f9f9f9;
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* Form hissəsi */
 .form-side {
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 50px;
-    background-color: #ffffff;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+    padding: 4rem 5rem;
+    background-color: #fff;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.07);
+    transition: padding 0.3s ease;
 }
 
+/* Sayt adı */
 .site-name {
-    font-size: 36px;
-    font-weight: bold;
-    color: #007bff;
-    margin-bottom: 20px;
+    font-size: 3.2rem;
+    font-weight: 900;
+    color: #2563eb;
+    margin-bottom: 1rem;
+    user-select: none;
+    letter-spacing: 1.2px;
 }
 
+/* Başlıq */
 .form-side h2 {
-    font-size: 26px;
-    margin-bottom: 25px;
-    color: #333;
+    font-size: 1.9rem;
+    margin-bottom: 2.2rem;
+    color: #1e293b;
 }
 
+/* Form */
 form {
     width: 100%;
-    max-width: 400px;
+    max-width: 420px;
+    padding: 2.5rem 2rem;
+    background-color: #fafafa;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.15);
+    display: flex;
+    flex-direction: column;
 }
 
+/* Select və inputlar */
 form input,
 .role-dropdown {
     width: 100%;
-    padding: 12px 14px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 15px;
-    background-color: #fdfdfd;
+    padding: 14px 18px;
+    margin-bottom: 1.2rem;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    background-color: #fff;
 }
 
 form input:focus,
 .role-dropdown:focus {
-    border-color: #007bff;
+    border-color: #2563eb;
     outline: none;
+    box-shadow: 0 0 8px rgba(37, 99, 235, 0.3);
 }
 
+/* Checkbox */
 .checkbox-container {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 12px;
+    margin-bottom: 2rem;
     font-size: 14px;
-    color: #333;
+    color: #334155;
+    user-select: none;
 }
 
 .checkbox-container input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     margin: 0;
-    accent-color: #007bff;
+    accent-color: #2563eb;
 }
 
-
+/* Register düyməsi */
 .register-btn {
-    width: 100%;
-    padding: 14px;
-    background-color: #007bff;
+    padding: 16px 0;
+    background-color: #2563eb;
     color: white;
-    font-size: 16px;
-    font-weight: bold;
+    font-weight: 700;
+    font-size: 1.1rem;
     border: none;
-    border-radius: 6px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.register-btn:hover {
-    background-color: #0056b3;
+.register-btn:hover,
+.register-btn:focus {
+    background-color: #1e40af;
+    transform: scale(1.05);
+    outline: none;
 }
 
+/* Login link */
 .login-link {
-    margin-top: 20px;
+    margin-top: 24px;
     text-align: center;
-    font-size: 14px;
+    font-size: 0.9rem;
+    color: #475569;
 }
 
 .login-link a {
-    color: #007bff;
+    color: #2563eb;
     text-decoration: none;
+    font-weight: 600;
+    transition: text-decoration 0.2s ease;
 }
 
 .login-link a:hover {
     text-decoration: underline;
 }
 
+/* Image tərəfi */
 .image-side {
     flex: 1;
-    background-color: #f2f2f2;
+    background-color: #e0e7ff;
     display: flex;
-    align-items: center;
     justify-content: center;
-    padding: 40px;
+    align-items: center;
+    padding: 3rem;
+    transition: padding 0.3s ease;
 }
 
 .image-side img {
-    width: 100%;
-    max-width: 500px;
-    height: auto;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    width: 85%;
+    max-width: 520px;
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(37, 99, 235, 0.25);
+    user-select: none;
+    transition: transform 0.4s ease;
 }
 
+.image-side img:hover {
+    transform: scale(1.04);
+}
+
+/* Error mesajları */
 .error {
-    color: crimson;
+    color: #dc2626;
     font-size: 13px;
-    margin-top: 4px;
-    margin-bottom: 8px;
-    font-weight: 500;
+    margin-top: -10px;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+/* Responsivlik */
+
+/* Planşet */
+@media (max-width: 900px) {
+    .register-container {
+        flex-direction: column;
+    }
+
+    .form-side,
+    .image-side {
+        flex: none;
+        width: 100%;
+        padding: 3rem 2.5rem;
+        box-shadow: none;
+        background-color: transparent;
+    }
+
+    .form-side {
+        padding-top: 2rem;
+    }
+
+    form {
+        background-color: #fff;
+        box-shadow: 0 0 0 transparent;
+        border-radius: 14px;
+        padding: 2rem 1.5rem;
+        max-width: 100%;
+    }
+
+    .site-name {
+        font-size: 2.6rem;
+    }
+
+    .form-side h2 {
+        font-size: 1.6rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .image-side {
+        padding-bottom: 0;
+        margin-bottom: 2rem;
+    }
+
+    .image-side img {
+        width: 90%;
+        max-width: 400px;
+        border-radius: 14px;
+    }
+}
+
+/* Mobil */
+@media (max-width: 480px) {
+    .site-name {
+        font-size: 2.2rem;
+    }
+
+    .form-side h2 {
+        font-size: 1.3rem;
+    }
+
+    form input,
+    .role-dropdown {
+        padding: 12px 14px;
+        font-size: 0.95rem;
+    }
+
+    .register-btn {
+        font-size: 1rem;
+        padding: 14px 0;
+        border-radius: 10px;
+    }
+
+    .image-side img {
+        width: 95%;
+        max-width: 320px;
+    }
 }

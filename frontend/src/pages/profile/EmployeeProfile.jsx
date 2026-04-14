@@ -1,70 +1,81 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
-import { getEmployeeProfile } from "../../services/profileAPI";
+import { getMyEmployeeProfile, updateEmployeeProfile } from "../../services/profileService";
 import EmployeeProfileInfo from "../../components/profile/EmployeeProfileInfo";
-import EditProfileModal from "../../components/profile/EditEmployeeProfileModal";
+import EditEmployeeProfileModal from "../../components/profile/EditEmployeeProfileModal";
 
-function EmployeeProfilePage() {
+function EmployeeProfile() {
     const navigate = useNavigate();
-    const { isAuthenticated, user } = useSelector((state) => state.user);
+    const { isAuthenticated, token, role } = useSelector((state) => state.user);
+
     const [profile, setProfile] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [openModal, setOpenModal] = useState(false);
 
     useEffect(() => {
-        if (!isAuthenticated) {
-            toast.error("Giriş tələb olunur");
+        if (!isAuthenticated || !token) {
             navigate("/login");
             return;
         }
 
-        let userId = user?.id || user?._id;
-        console.log("🔍 user.id:", userId);
+        if (role !== "employee") {
+            toast.error("Bu səhifə yalnız employee üçündür");
+            navigate("/");
+            return;
+        }
 
-        // Müvəqqəti test route istifadə edə bilərsən
-        getEmployeeProfile(userId)
-            .then(res => {
-                console.log("✅ Profil məlumatı:", res.data);
-                if (res.data?.profile) {
-                    setProfile(res.data.profile);
+        const loadProfile = async () => {
+            try {
+                const { data } = await getMyEmployeeProfile(token);
+                setProfile(data.profile);
+            } catch (err) {
+                if (err?.response?.status === 404) {
+                    toast.info("Profil tapılmadı, yaradın");
+                    navigate("/create-employee-profile");
                 } else {
-                    toast.error("Profil məlumatı tapılmadı");
+                    toast.error(err?.response?.data?.message || "Profil tapılmadı");
                 }
-            })
-            .catch(err => {
-                toast.error("Profil tapılmadı");
-                console.error("getEmployeeProfile error:", err);
-            });
-    }, [isAuthenticated, navigate, user]);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadProfile();
+    }, [token, isAuthenticated, role, navigate]);
 
     const handleUpdate = async (updatedData) => {
         try {
-            const res = await updateEmployeeProfile(user.id, updatedData);
-            setProfile(res.data.profile);
-            toast.success("Profil uğurla yeniləndi");
+            const { data } = await updateEmployeeProfile(updatedData, token);
+            setProfile(data.profile);
+            toast.success("Profil yeniləndi");
             setOpenModal(false);
         } catch (err) {
-            toast.error("Redaktə zamanı xəta baş verdi");
-            console.error(err);
+            toast.error("Yeniləmə zamanı xəta");
         }
     };
 
-    if (!profile) return <p style={{ padding: "2rem", textAlign: "center" }}>Profil məlumatı yüklənir...</p>;
+    if (loading) return <p style={{ textAlign: "center" }}>Yüklənir...</p>;
 
     return (
         <>
-            <EmployeeProfileInfo profile={profile} onEdit={() => setOpenModal(true)} />
-            <EditProfileModal
-                isOpen={openModal}
+            <EmployeeProfileInfo
+                profile={profile}
+                setOpenModal={setOpenModal}
+                token={token}
+                setProfile={setProfile}
+            />
+
+            <EditEmployeeProfileModal
+                open={openModal}
                 onClose={() => setOpenModal(false)}
+                profile={profile}
                 onSave={handleUpdate}
-                initialData={profile}
-                userId={user?.id}
             />
         </>
     );
 }
 
-export default EmployeeProfilePage;
+export default EmployeeProfile;

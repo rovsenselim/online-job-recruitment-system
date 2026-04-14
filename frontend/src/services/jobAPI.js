@@ -10,8 +10,17 @@ const api = axios.create({
 export const getAllJobs = async () => {
     try {
         const response = await api.get("/jobs");
-        return response.data; // { jobs: [...] } formatında gözlənilir
+
+        // Response həmişə { jobs: [...] } formatında olsun
+        if (Array.isArray(response.data)) {
+            return { jobs: response.data };
+        } else if (response.data.jobs) {
+            return response.data;
+        } else {
+            return { jobs: [] };
+        }
     } catch (error) {
-        throw error;
+        console.error("getAllJobs API error:", error);
+        return { jobs: [] }; // Xəta olsa belə boş array qaytarır
     }
 };

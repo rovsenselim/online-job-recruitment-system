@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    favorites: [],
+    favorites: JSON.parse(localStorage.getItem("favorites")) || [],
 };
 
 const favoritesSlice = createSlice({
@@ -18,14 +18,17 @@ const favoritesSlice = createSlice({
                 // Əks halda əlavə et
                 state.favorites.push(job);
             }
+            localStorage.setItem("favorites", JSON.stringify(state.favorites));
         },
         removeFavorite: (state, action) => {
             // action.payload burada jobId olmalıdır
             state.favorites = state.favorites.filter((fav) => fav._id !== action.payload);
+            localStorage.setItem("favorites", JSON.stringify(state.favorites));
         },
         clearFavorites: (state) => {
             // Bütün favoriteləri təmizləmək üçün (lazımdırsa)
             state.favorites = [];
+            localStorage.removeItem("favorites");
         },
     },
 });

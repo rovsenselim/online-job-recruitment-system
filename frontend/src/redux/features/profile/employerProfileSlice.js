@@ -1,14 +1,20 @@
+// redux/features/profile/employerProfileSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import API from "../../../services/api";
 
 export const fetchEmployerProfile = createAsyncThunk(
     "employerProfile/fetch",
-    async (userId, { rejectWithValue }) => {
+    async ({ userId, token }, { rejectWithValue }) => {
         try {
-            let res = await API.get(`/profile/employer/${userId}`);
-            return res.data;
+            const res = await API.get(`/profile/employer/${userId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                withCredentials: true,
+            });
+            return res.data.profile;
         } catch (err) {
-            return rejectWithValue(err.response?.data || "Xəta baş verdi");
+            return rejectWithValue(err.response?.data?.message || "Xəta baş verdi");
         }
     }
 );

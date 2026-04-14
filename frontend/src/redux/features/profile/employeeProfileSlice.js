@@ -1,16 +1,18 @@
-// redux/profile/employeeProfileSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import API from "../../../services/api";
 
 // Async thunk - profil məlumatını gətir
 export const fetchEmployeeProfile = createAsyncThunk(
     "employeeProfile/fetch",
-    async (userId, { rejectWithValue }) => {
+    async (_, { getState, rejectWithValue }) => {
         try {
-            let res = await API.get(`/api/profile/employee/${userId}`);
+            const token = getState().user.token;
+            const res = await API.get("/profile/employee/me", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
             return res.data;
         } catch (err) {
-            return rejectWithValue(err.response.data);
+            return rejectWithValue(err.response?.data || "Xəta baş verdi");
         }
     }
 );

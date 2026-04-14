@@ -1,94 +1,180 @@
+/* Container */
 .login-container {
     display: flex;
     height: 100vh;
     background-color: #f2f2f2;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-
-.site-name {
-    font-size: 70px;
-    font-weight: bold;
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-
-}
-
+/* Form side */
 .form-side {
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 40px;
-}
-
-.form-side h2 {
-    font-size: 28px;
-    margin-bottom: 20px;
-    color: #333;
-}
-
-form {
-    width: 500px;
-    max-width: 500px;
+    padding: 3rem 4rem;
     background-color: #fff;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.05);
 }
 
-form input {
-    width: 460px;
-    padding: 10px 14px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+/* Site name */
+.site-name {
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: #4f46e5;
+    margin-bottom: 1rem;
+    user-select: none;
+    letter-spacing: 1.5px;
 }
 
+/* Heading */
+.form-side h2 {
+    font-size: 1.75rem;
+    margin-bottom: 2rem;
+    color: #1f2937;
+}
 
-
-
-.login-btn {
+/* Form styling */
+form {
     width: 100%;
-    padding: 12px;
-    background-color: #007bff;
+    max-width: 420px;
+    padding: 2.5rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(79, 70, 229, 0.15);
+    background-color: #fafafa;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Inputs */
+form input {
+    width: 100%;
+    padding: 14px 16px;
+    margin-bottom: 1.25rem;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+form input:focus {
+    border-color: #6366f1;
+    outline: none;
+    box-shadow: 0 0 8px rgba(99, 102, 241, 0.3);
+}
+
+/* Login button */
+.log-btn {
+    padding: 14px 0;
+    background-color: #4f46e5;
     color: white;
-    font-size: 15px;
+    font-weight: 700;
+    font-size: 1.1rem;
     border: none;
-    border-radius: 6px;
+    border-radius: 10px;
     cursor: pointer;
-    transition: 0.3s;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.login-btn:hover {
-    background-color: #0056b3;
+.log-btn:hover,
+.log-btn:focus {
+    background-color: #4338ca;
+    transform: scale(1.03);
+    outline: none;
 }
 
-
+/* Image side */
 .image-side {
     flex: 1;
-    background-color: #fff;
+    background-color: #e0e7ff;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    padding: 2rem;
 }
 
 .image-side img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
+    width: 80%;
+    max-width: 450px;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(79, 70, 229, 0.3);
+    user-select: none;
+    transition: transform 0.4s ease;
 }
 
-.log-btn {
-    width: 100px;
-    height: 40px;
-    color: white;
-    background-color: rgb(78, 78, 254);
-    border-radius: 10px;
-    font-size: 15px;
-    font-weight: bold;
+.image-side img:hover {
+    transform: scale(1.05);
 }
 
-.log-btn:hover {
-    background-color: rgb(52, 52, 248);
+/* Responsiveness */
+
+/* Tablet */
+@media (max-width: 900px) {
+    .login-container {
+        flex-direction: column;
+    }
+
+    .form-side,
+    .image-side {
+        flex: none;
+        width: 100%;
+        padding: 3rem 2rem;
+    }
+
+    .image-side {
+        order: -1;
+        /* image üstə keçir */
+        padding-bottom: 0;
+    }
+
+    .form-side {
+        box-shadow: none;
+        background-color: transparent;
+        padding-top: 1rem;
+    }
+
+    form {
+        max-width: 100%;
+        padding: 2rem 1.5rem;
+        box-shadow: 0 0 0 transparent;
+        background-color: #fff;
+        border-radius: 14px;
+    }
+
+    .site-name {
+        font-size: 2.8rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .form-side h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .site-name {
+        font-size: 2.2rem;
+    }
+
+    .form-side h2 {
+        font-size: 1.3rem;
+    }
+
+    form input {
+        padding: 12px 14px;
+        font-size: 0.95rem;
+    }
+
+    .log-btn {
+        font-size: 1rem;
+        padding: 12px 0;
+    }
+
+    .image-side img {
+        width: 90%;
+        max-width: 320px;
+    }
 }

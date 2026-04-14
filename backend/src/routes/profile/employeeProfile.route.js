@@ -1,36 +1,42 @@
 import express from "express";
 import {
-    getEmployeeProfile,
-    updateEmployeeProfile,
     createEmployeeProfile,
-    uploadCV,
-    deleteCV,
-    editCV,
+    getMyEmployeeProfile,
+    updateEmployeeProfile,
     uploadProfilePhoto,
-    getMyEmployeeProfile
+    uploadCV
 } from "../../controllers/profile/employeeProfile.controller.js";
 
-import { uploadCVFileOnly, uploadProfilePic } from "../../middleware/uploadFile.js";
 import { protect } from "../../middleware/authMiddleware.js";
+import { upload } from "../../../utils/multer.js";
 
 const router = express.Router();
 
-// Profil məlumatı (tokenlə daxil olmuş istifadəçi üçün)
-router.get("/me", protect, getMyEmployeeProfile);
-
-// Debug məqsədli profil yoxlaması (token tələb etmir, frontenddən ID gəlir)
-router.get("/test/:userId", getEmployeeProfile);  // ⚠️ yalnız müvəqqəti debugging üçün
-
-// Əsas profil route-lar (token tələb olunur)
-router.get("/:userId", protect, getEmployeeProfile);
+/* =========================
+   PROFİL CRUD
+========================= */
 router.post("/", protect, createEmployeeProfile);
-router.put("/:userId", protect, updateEmployeeProfile);
-router.post("/upload-cv/:userId", protect, uploadCVFileOnly.single("cv"), uploadCV);
-router.delete("/delete-cv/:userId/:filename", protect, deleteCV);
-router.put("/edit-cv/:userId/:index", protect, uploadCVFileOnly.single("cv"), editCV);
-router.post("/upload-photo/:userId", protect, uploadProfilePic.single("photo"), uploadProfilePhoto);
-router.post("/upload-photo/:userId", protect, uploadProfilePic.single("profilePic"), uploadProfilePhoto);
+router.get("/me", protect, getMyEmployeeProfile);
+router.put("/me", protect, updateEmployeeProfile);
 
+/* =========================
+   PROFİL ŞƏKLİ
+========================= */
+router.post(
+    "/me/profile-pic",
+    protect,
+    upload.single("profilePic"),
+    uploadProfilePhoto
+);
+
+/* =========================
+   CV UPLOAD
+========================= */
+router.post(
+    "/me/cv",
+    protect,
+    upload.single("cv"), // 🔹 form-data key: cv
+    uploadCV
+);
 
 export default router;
-

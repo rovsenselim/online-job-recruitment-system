@@ -1,119 +1,199 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { FaHeart } from "react-icons/fa";
-import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleFavorite } from "../../../redux/features/favoritesSlice";
+import { fetchEmployeeCVs } from "../../../redux/features/employerCvSlice";
 import "./EmployerHomeContent.css";
 
-const sliderImages = [
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcReyNIDj8bTlhYZ7P3QnuilhcOOnNVQ0JKFyw&s",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDEs6dV12u87BNcJcGtWY7Q4sNRXvjgL6_kkGxE5POh4ExMO-YdxKbyRwQjZGKV3s_BKI&usqp=CAU",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBnJNOgme1kNR3joLyLKgc8vP95M7DJY1OJZTZd1T340VJEaC-IwrFol8FdJhqgg5A2AE&usqp=CAU",
-];
-
 const EmployerHomeContent = () => {
-    const [currentImage, setCurrentImage] = useState(0);
-    const [profile, setProfile] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+    const dispatch = useDispatch();
 
-    const token = useSelector((state) => state.user.user?.token);
-    const userId = useSelector((state) => state.user.user?.id || state.user.user?._id);
+    const favorites = useSelector((state) => state.favorites.favorites);
+    const { cvs: profiles = [], loading, error } = useSelector(
+        (state) => state.employerCv
+    );
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setCurrentImage((prev) => (prev + 1) % sliderImages.length);
-        }, 5000);
-
-        return () => clearInterval(interval);
-    }, []);
+    const [filterProfession, setFilterProfession] = useState("All");
+    const [filterLocation, setFilterLocation] = useState("All");
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
-        const fetchProfile = async () => {
-            if (!token || !userId) {
-                setError("Giriş tələb olunur.");
-                setProfile(null);
-                setLoading(false);
-                return;
-            }
+        dispatch(fetchEmployeeCVs());
+    }, [dispatch]);
 
-            setLoading(true);
-            setError(null);
+    const isFavorited = (profile) => {
+        return favorites.some(
+            (fav) =>
+                (fav._id && profile._id && fav._id === profile._id) ||
+                (fav.filename && profile.filename && fav.filename === profile.filename)
+        );
+    };
 
-            try {
-                const res = await axios.get(`http://localhost:5000/api/profile/employer/${userId}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                setProfile(res.data.profile);
-            } catch (err) {
-                setError(err.response?.data?.message || "Xəta baş verdi");
-                setProfile(null);
-            } finally {
-                setLoading(false);
-            }
-        };
+    const filteredProfiles = profiles.filter((profile) => {
+        const professionVal = profile.employeeProfession || profile.profession || "Naməlum";
+        const fullnameVal = profile.employeeFullname || profile.fullname || "Naməlum";
+        const locationVal = profile.location || "Naməlum";
 
-        fetchProfile();
-    }, [token, userId]);
+        const professionMatch = filterProfession === "All" || professionVal === filterProfession;
+        const locationMatch = filterLocation === "All" || locationVal === filterLocation;
 
-    const cvs = Array.isArray(profile?.cvs) ? profile.cvs : [];
+        const searchText = searchTerm.trim().toLowerCase();
+        const searchMatch =
+            fullnameVal.toLowerCase().includes(searchText) ||
+            professionVal.toLowerCase().includes(searchText) ||
+            (profile.cvFullname && profile.cvFullname.toLowerCase().includes(searchText)) ||
+            (profile.cvProfession && profile.cvProfession.toLowerCase().includes(searchText));
+
+        return professionMatch && locationMatch && (!searchText || searchMatch);
+    });
+
+    const professions = [
+        "All",
+        ...new Set(
+            profiles
+                .map((p) => p.employeeProfession || p.profession || "Naməlum")
+                .filter(Boolean)
+        ),
+    ];
+    const locations = [
+        "All",
+        ...new Set(profiles.map((p) => p.location || "Naməlum").filter(Boolean)),
+    ];
+
+    const CV_BASE_URL = "http://localhost:5000/uploads/cvs/";
 
     return (
         <>
-            {/* === HERO === */}
-            <section className="hero-section" style={{ backgroundImage: `url(${sliderImages[currentImage]})` }}>
+            <section className="hero-section hero-employer">
                 <div className="overlay">
                     <div className="hero-content fade-in">
-                        <h1>Hire The Best Talent for Your Company</h1>
-                        <p>Explore a wide pool of professionals and connect with top talent.</p>
-                        <input type="text" placeholder="Search CVs..." className="job-search" />
+                        <h1>Find the Best Candidates for Your Company</h1>
+                        <p>Browse employee profiles and discover top talents.</p>
+
+                        <input
+                            type="text"
+                            placeholder="Search by name, profession, CV..."
+                            className="search-input"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
                     </div>
                 </div>
             </section>
 
-            {/* === FILTER + CARDS === */}
-            <div className="homecard-container">
-                {/* Filter Panel */}
+            <div className="homecontent-container">
                 <aside className="filter-panel">
-                    <div className="filter-wrapper">
-                        <h3>Filter CVs</h3>
-                        <button
-                            className="reset-btn"
-                            onClick={() => {
-                                // Filtrləri sıfırlamaq üçün lazım olarsa state əlavə edə bilərsən
-                            }}
+                    <h3>Filter Candidates</h3>
+
+                    <div className="filter-group">
+                        <label>Profession</label>
+                        <select
+                            value={filterProfession}
+                            onChange={(e) => setFilterProfession(e.target.value)}
                         >
-                            Reset Filters
-                        </button>
+                            {professions.map((prof) => (
+                                <option key={prof} value={prof}>
+                                    {prof}
+                                </option>
+                            ))}
+                        </select>
                     </div>
+
+                    <div className="filter-group">
+                        <label>Location</label>
+                        <select
+                            value={filterLocation}
+                            onChange={(e) => setFilterLocation(e.target.value)}
+                        >
+                            {locations.map((loc) => (
+                                <option key={loc} value={loc}>
+                                    {loc}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <button
+                        className="reset-btn"
+                        onClick={() => {
+                            setFilterProfession("All");
+                            setFilterLocation("All");
+                            setSearchTerm("");
+                        }}
+                    >
+                        Reset Filters
+                    </button>
                 </aside>
 
-                {/* Cards Panel */}
                 <main className="cards-panel">
-                    {loading && <p>Yüklənir...</p>}
-                    {error && <p style={{ color: "red" }}>Xəta: {error}</p>}
-                    {!loading && !error && cvs.length === 0 && <p>CV tapılmadı.</p>}
+                    {loading ? (
+                        <p>Loading...</p>
+                    ) : error ? (
+                        <p className="error">{error}</p>
+                    ) : filteredProfiles.length === 0 ? (
+                        <p>No candidates match the filter criteria.</p>
+                    ) : (
+                        filteredProfiles.map((profile, idx) => {
+                            const cvFileLink = profile.filename
+                                ? CV_BASE_URL + profile.filename
+                                : null;
 
-                    {!loading &&
-                        !error &&
-                        cvs.map((cv, idx) => (
-                            <div className="home-job-card" key={idx}>
-                                <div className="home-job-info-centered">
-                                    <div className="job-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                                        <h3 className="job-title">CV File #{idx + 1}</h3>
-                                        <FaHeart className="heart-icon" />
-                                    </div>
-                                    <p className="job-company">Uploaded File</p>
-                                    <p className="job-salary">
-                                        <a href={`http://localhost:5000/uploads/cvs/${cv}`} target="_blank" rel="noreferrer noopener">
-                                            {cv}
-                                        </a>
-                                    </p>
-                                    <div className="job-tags">
-                                        <span className="tag">CV</span>
+                            return (
+                                <div
+                                    className="candidate-card"
+                                    key={profile._id ?? profile.filename ?? idx}
+                                >
+                                    <FaHeart
+                                        className={`heart-icon ${isFavorited(profile) ? "favorited" : ""
+                                            }`}
+                                        onClick={() => dispatch(toggleFavorite(profile))}
+                                        title={
+                                            isFavorited(profile)
+                                                ? "Remove from Favorites"
+                                                : "Add to Favorites"
+                                        }
+                                    />
+
+                                    <div className="card-content">
+                                        <h3>{profile.employeeFullname || profile.fullname || "Naməlum"}</h3>
+
+                                        <p>
+                                            <strong>Profession:</strong>{" "}
+                                            {profile.employeeProfession || profile.profession || "Naməlum"}
+                                        </p>
+
+                                        <p>
+                                            <strong>CV Name:</strong>{" "}
+                                            {profile.cvFullname || "Yoxdur"}
+                                        </p>
+
+                                        <p>
+                                            <strong>CV Profession:</strong>{" "}
+                                            {profile.cvProfession || "Yoxdur"}
+                                        </p>
+
+                                        {cvFileLink ? (
+                                            <p>
+                                                <strong>CV File: </strong>
+                                                <a
+                                                    href={cvFileLink}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="cv-link"
+                                                >
+                                                    {profile.filename}
+                                                </a>
+                                            </p>
+                                        ) : (
+                                            <p>
+                                                <strong>CV File:</strong> Yoxdur
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })
+                    )}
                 </main>
             </div>
         </>

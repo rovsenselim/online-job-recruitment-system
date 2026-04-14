@@ -1,24 +1,30 @@
+// src/models/profile/employerProfile.model.js
+
 import mongoose from "mongoose";
 
-const employerProfileSchema = new mongoose.Schema({
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true, unique: true },
-    companyName: { type: String, default: "" },
-    industry: { type: String, default: "" },
-    website: { type: String, default: "" },
-    location: { type: String, default: "" },
-    phone: { type: String, default: "" },
+const jobPostSchema = new mongoose.Schema({
+    title: { type: String, required: true },
+    salary: { type: String, default: "" },
     description: { type: String, default: "" },
-    logo: { type: String, default: "" },
-    announcements: [
-        {
-            title: String,
-            description: String,
-            createdAt: { type: Date, default: Date.now }
-        }
-    ],
-    cvs: [String], // CV faylları burada saxlanır
-    profilePic: { type: String, default: "" }
-}, { timestamps: true });
+    location: { type: String, default: "Remote" },
+    deadline: { type: String, default: "" },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+});
 
-const EmployerProfile = mongoose.model("EmployerProfile", employerProfileSchema);
-export default EmployerProfile;
+const employerProfileSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+    },
+    companyName: { type: String, required: true },
+    phone: { type: String, default: "" },
+    location: { type: String, default: "" },
+    description: { type: String, default: "" },
+    email: { type: String, default: "" },
+    profilePic: { type: String, default: "" },
+    jobPosts: [jobPostSchema],
+});
+
+export default mongoose.model("EmployerProfile", employerProfileSchema);

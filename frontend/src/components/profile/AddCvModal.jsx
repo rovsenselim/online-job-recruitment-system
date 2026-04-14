@@ -1,58 +1,78 @@
-// src/components/profile/AddCvModal.jsx
 import React, { useState } from "react";
-import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    Button,
-    Typography
-} from "@mui/material";
+import "./AddCVModal.css";
 
-function AddCvModal({ open, onClose, onAdd }) {
+function AddCVModal({ open, onClose, onSave }) {
+    const [fullname, setFullname] = useState("");
+    const [profession, setProfession] = useState("");
     const [cvFile, setCvFile] = useState(null);
 
+    if (!open) return null;
+
     const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setCvFile(file);
-        }
+        setCvFile(e.target.files[0]);
     };
 
-    const handleSubmit = () => {
-        if (cvFile) {
-            onAdd(cvFile);
-            onClose();
-            setCvFile(null);
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        if (!cvFile) {
+            alert("Zəhmət olmasa, CV faylı seçin.");
+            return;
         }
+
+        const newCV = {
+            fullname,
+            profession,
+            file: cvFile,
+        };
+
+        onSave(newCV);
+
+        setFullname("");
+        setProfession("");
+        setCvFile(null);
     };
 
     return (
-        <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-            <DialogTitle>Yeni CV Yüklə</DialogTitle>
-            <DialogContent>
-                <Button variant="outlined" component="label">
-                    CV Faylı Seç (.pdf, .doc, .docx)
-                    <input
-                        type="file"
-                        accept=".pdf,.doc,.docx"
-                        hidden
-                        onChange={handleFileChange}
-                    />
-                </Button>
+        <div className="modal-overlay">
+            <div className="modal-content">
+                <h2>CV əlavə et</h2>
+                <form onSubmit={handleSubmit} className="cv-form">
+                    <label>
+                        Tam Ad:
+                        <input
+                            type="text"
+                            value={fullname}
+                            onChange={(e) => setFullname(e.target.value)}
+                            placeholder="Tam adınızı daxil edin"
+                        />
+                    </label>
+                    <label>
+                        Peşə:
+                        <input
+                            type="text"
+                            value={profession}
+                            onChange={(e) => setProfession(e.target.value)}
+                            placeholder="Peşənizi daxil edin"
+                        />
+                    </label>
+                    <label>
+                        CV faylı (.pdf):
+                        <input
+                            type="file"
+                            accept=".pdf"
+                            onChange={handleFileChange}
+                        />
+                    </label>
 
-                {cvFile && (
-                    <Typography mt={2} variant="body2">
-                        Seçilmiş Fayl: {cvFile.name}
-                    </Typography>
-                )}
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={onClose} color="error">Ləğv et</Button>
-                <Button onClick={handleSubmit} color="primary">Yadda saxla</Button>
-            </DialogActions>
-        </Dialog>
+                    <div className="modal-buttons">
+                        <button type="submit" className="btn btn-save">Yadda saxla</button>
+                        <button type="button" className="btn btn-cancel" onClick={onClose}>Ləğv et</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     );
 }
 
-export default AddCvModal;
+export default AddCVModal;

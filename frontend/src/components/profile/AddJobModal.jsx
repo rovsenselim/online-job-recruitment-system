@@ -1,116 +1,117 @@
-// src/components/profile/AddJobModal.jsx
-import React, { useState } from "react";
-import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    Button,
-    TextField
-} from "@mui/material";
+import React, { useState, useEffect } from "react";
+import "./AddJobModal.css";
 
-function AddJobModal({ open, onClose, onAdd }) {
-    let [formData, setFormData] = useState({
+function AddJobModal({ open, onClose, onSave }) {
+    const [formData, setFormData] = useState({
         title: "",
-        salary: "",
-        companyName: "",
         description: "",
-        image: null
+        salary: "",
+        location: "",
+        jobType: "",
+        category: "",
     });
 
-    let handleChange = (e) => {
-        let { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
-
-    let handleImageChange = (e) => {
-        let file = e.target.files[0];
-        if (file) {
-            setFormData((prev) => ({ ...prev, image: file }));
+    useEffect(() => {
+        if (!open) {
+            // Modal bağlandıqda formu sıfırla
+            setFormData({
+                title: "",
+                description: "",
+                salary: "",
+                location: "",
+                jobType: "",
+                category: "",
+            });
         }
+    }, [open]);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    let handleSubmit = () => {
-        let jobData = {
-            ...formData,
-            imagePreview: formData.image ? URL.createObjectURL(formData.image) : null
-        };
-
-        onAdd(jobData);
-        onClose();
-
-        // Form reset
-        setFormData({
-            title: "",
-            salary: "",
-            companyName: "",
-            description: "",
-            image: null
-        });
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSave(formData);
     };
+
+    if (!open) return null;
 
     return (
-        <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-            <DialogTitle>Yeni Elan Yerləşdir</DialogTitle>
-            <DialogContent>
-                <TextField
-                    name="title"
-                    label="İşin adı"
-                    value={formData.title}
-                    onChange={handleChange}
-                    fullWidth
-                    margin="dense"
-                />
-                <TextField
-                    name="salary"
-                    label="Maaş (AZN)"
-                    value={formData.salary}
-                    onChange={handleChange}
-                    fullWidth
-                    margin="dense"
-                />
-                <TextField
-                    name="companyName"
-                    label="Şirkət adı"
-                    value={formData.companyName}
-                    onChange={handleChange}
-                    fullWidth
-                    margin="dense"
-                />
-                <TextField
-                    name="description"
-                    label="Əlavə məlumat"
-                    value={formData.description}
-                    onChange={handleChange}
-                    fullWidth
-                    multiline
-                    rows={3}
-                    margin="dense"
-                />
-                <Button
-                    variant="outlined"
-                    component="label"
-                    sx={{ mt: 2 }}
-                >
-                    Şəkil əlavə et
-                    <input
-                        type="file"
-                        hidden
-                        accept="image/*"
-                        onChange={handleImageChange}
-                    />
-                </Button>
-                {formData.image && (
-                    <p style={{ fontSize: "0.9em", marginTop: "5px" }}>
-                        Seçilmiş şəkil: {formData.image.name}
-                    </p>
-                )}
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={onClose} color="error">Ləğv et</Button>
-                <Button onClick={handleSubmit} color="primary">Yadda saxla</Button>
-            </DialogActions>
-        </Dialog>
+        <div className="modal-overlay">
+            <div className="modal-content">
+                <h2>Add New Job</h2>
+                <form onSubmit={handleSubmit} className="job-form">
+                    <label>
+                        Title
+                        <input
+                            type="text"
+                            name="title"
+                            value={formData.title}
+                            onChange={handleChange}
+                            required
+                        />
+                    </label>
+
+                    <label>
+                        Description
+                        <textarea
+                            name="description"
+                            value={formData.description}
+                            onChange={handleChange}
+                            rows={5}
+                            required
+                        />
+                    </label>
+
+                    <label>
+                        Salary
+                        <input
+                            type="text"
+                            name="salary"
+                            value={formData.salary}
+                            onChange={handleChange}
+                            required
+                        />
+                    </label>
+
+                    <label>
+                        Location
+                        <input
+                            type="text"
+                            name="location"
+                            value={formData.location}
+                            onChange={handleChange}
+                        />
+                    </label>
+
+                    <label>
+                        Job Type
+                        <input
+                            type="text"
+                            name="jobType"
+                            value={formData.jobType}
+                            onChange={handleChange}
+                        />
+                    </label>
+
+                    <label>
+                        Category
+                        <input
+                            type="text"
+                            name="category"
+                            value={formData.category}
+                            onChange={handleChange}
+                        />
+                    </label>
+
+                    <div className="form-buttons">
+                        <button type="submit" className="save-btn">Add Job</button>
+                        <button type="button" className="cancel-btn" onClick={onClose}>Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     );
 }
 

@@ -1,234 +1,253 @@
-// src/components/profile/EmployerProfileInfo.jsx
 import React, { useEffect, useRef, useState } from "react";
-import "./EmployerProfileInfo.css";
-import { FaCamera, FaEdit, FaSignOutAlt, FaPlus, FaTrash } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
-import { logoutUser } from "../../redux/features/userSlice";
-import { useNavigate } from "react-router-dom";
-import { getEmployerProfile, uploadEmployerLogo } from "../../services/profileAPI";
 import { toast } from "react-toastify";
-
+import { useNavigate } from "react-router-dom";
+import { FaTrash, FaEdit } from "react-icons/fa";
+import API from "../../services/api";
 import EditEmployerProfileModal from "./EditEmployerProfileModal";
 import AddJobModal from "./AddJobModal";
+import EditJobModal from "./EditJobModal";
+import "./EmployerProfileInfo.css";
 
 function EmployerProfileInfo() {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const { user } = useSelector((state) => state.user);
-
     const [profile, setProfile] = useState(null);
-    const [showEditModal, setShowEditModal] = useState(false);
-    const [showJobModal, setShowJobModal] = useState(false);
-    const [jobList, setJobList] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isEditOpen, setIsEditOpen] = useState(false);
+    const [isAddJobOpen, setIsAddJobOpen] = useState(false);
+    const [editJobModalOpen, setEditJobModalOpen] = useState(false);
+    const [selectedJob, setSelectedJob] = useState(null);
+    const [jobs, setJobs] = useState([]);
+    const imageRef = useRef(null);
+    const navigate = useNavigate();
 
-    const imageInputRef = useRef(null);
-
+    // --- Fetch employer profile ---
     useEffect(() => {
-        if (user?.id) {
-            loadProfile();
-        }
-    }, [user]);
+        const fetchData = async () => {
+            try {
+                setIsLoading(true);
+                const res = await API.get("/profile/employer/me");
 
-    const loadProfile = () => {
-        getEmployerProfile(user.id)
-            .then((res) => {
-                setProfile(res.data.profile);
-                setJobList(res.data.profile?.jobs || []);
-            })
-            .catch((err) => {
-                toast.error("Profil alınmadı");
-                console.error("Profil alınmadı:", err);
-            });
-    };
+                if (!res?.data?.profile) {
+                    toast.error("Profil tapılmadı və ya daxil olmamısınız");
+                    setProfile(null);
+                } else {
+                    setProfile(res.data.profile);
+                    setJobs(res.data.profile.jobPosts || []);
+                }
+            } catch (err) {
+                console.error(err);
+                toast.error("Profil tapılmadı və ya daxil olmamısınız");
+                setProfile(null);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
 
+    // --- Logout ---
     const handleLogout = () => {
-        dispatch(logoutUser());
+        document.cookie = "token=; Max-Age=0";
         navigate("/login");
     };
 
+    // --- Profile picture upload ---
     const handleImageChange = async (e) => {
         const file = e.target.files[0];
-        if (file) {
-            const formData = new FormData();
-            formData.append("logo", file);
+        if (!file || !profile?._id) return;
 
-            try {
-                await uploadEmployerLogo(user.id, formData);
-                toast.success("Logo yükləndi");
-                loadProfile();
-            } catch (err) {
-                toast.error("Logo əlavə olunarkən xəta baş verdi");
-                console.error("Logo yükləmə xətası:", err);
-            }
+        const formData = new FormData();
+        formData.append("photo", file);
+
+        try {
+            const res = await API.post(`/profile/employer/upload-photo/${profile._id}`, formData);
+            setProfile((prev) => ({ ...prev, profilePic: res.data.profilePic }));
+            toast.success("Şəkil yükləndi");
+        } catch (err) {
+            console.error("Şəkil yüklənmədi", err);
+            toast.error("Şəkil yüklənmədi");
         }
     };
 
-    const handleNewJob = (jobData) => {
-        setJobList((prev) => [...prev, jobData]);
-        toast.success("Yeni elan əlavə olundu");
+    // --- Profile update ---
+    const handleProfileSave = async (updatedData) => {
+        try {
+            const res = await API.put(`/profile/employer/${profile._id}`, updatedData);
+            setProfile(res.data.profile);
+            toast.success("Profil yeniləndi");
+        } catch (err) {
+            console.error("Profil yenilənmədi", err);
+            toast.error("Profil yenilənmədi");
+        } finally {
+            setIsEditOpen(false);
+        }
     };
 
-    const handleDeleteJob = (index) => {
-        const filtered = jobList.filter((_, i) => i !== index);
-        setJobList(filtered);
-        toast.info("Elan silindi");
+    // --- Add Job ---
+    const handleAddJob = async (jobData) => {
+        try {
+            if (!profile?._id) {
+                toast.error("İstifadəçi ID tapılmadı");
+                return;
+            }
+
+            const res = await API.post(`/profile/employer/add-job/${profile._id}`, jobData);
+            setJobs((prev) => [...prev, res.data.job]);
+            toast.success("Elan əlavə olundu");
+        } catch (err) {
+            console.error("Elan əlavə edilə bilmədi", err);
+            toast.error("Elan əlavə edilə bilmədi");
+        } finally {
+            setIsAddJobOpen(false);
+        }
     };
 
-    // Redaktə üçün modal göstərmək və cari redaktə ediləcək elan məlumatını ötürmək üçün
-    const [editingJobIndex, setEditingJobIndex] = useState(null);
-    const [editingJobData, setEditingJobData] = useState(null);
+    // --- Delete Job ---
+    const handleDeleteJob = async (jobId) => {
+        try {
+            if (!profile?._id) return;
 
-    const handleEditJob = (index) => {
-        setEditingJobIndex(index);
-        setEditingJobData(jobList[index]);
-        setShowJobModal(true);
+            await API.delete(`/profile/employer/delete-job/${profile._id}/${jobId}`);
+            setJobs((prev) => prev.filter((job) => job._id !== jobId));
+            toast.success("Elan silindi");
+        } catch (err) {
+            console.error("Elan silinmədi", err);
+            toast.error("Elan silinərkən xəta baş verdi");
+        }
     };
 
-    // Redaktə tamamlandıqda iş elanını yeniləmək üçün
-    const handleUpdateJob = (updatedJob) => {
-        setJobList((prev) =>
-            prev.map((job, idx) => (idx === editingJobIndex ? updatedJob : job))
-        );
-        toast.success("Elan redaktə olundu");
-        setEditingJobIndex(null);
-        setEditingJobData(null);
-        setShowJobModal(false);
+    // --- Edit Job ---
+    const handleEditJobClick = (job) => {
+        setSelectedJob(job);
+        setEditJobModalOpen(true);
     };
 
-    // Yeni elan əlavə edilərkən və redaktə edilərkən istifadə olunan modalun bağlanması
-    const handleCloseJobModal = () => {
-        setShowJobModal(false);
-        setEditingJobIndex(null);
-        setEditingJobData(null);
+    const handleEditJobSave = async (updatedData) => {
+        if (!selectedJob) return;
+
+        try {
+            const res = await API.put(
+                `/profile/employer/edit-job/${profile._id}/${selectedJob._id}`,
+                updatedData
+            );
+
+            setJobs((prev) =>
+                prev.map((job) => (job._id === selectedJob._id ? res.data.job : job))
+            );
+            toast.success("Elan yeniləndi");
+        } catch (err) {
+            console.error("Elan yenilənmədi", err);
+            toast.error("Elan yenilənmədi");
+        } finally {
+            setEditJobModalOpen(false);
+        }
     };
+
+    if (isLoading) return <p style={{ textAlign: "center", marginTop: "50px" }}>Yüklənir...</p>;
+    if (!profile) return <p style={{ textAlign: "center", marginTop: "50px" }}>Profil məlumatı mövcud deyil</p>;
 
     return (
-        <div className="employer-profile-page">
+        <div className="profile-container">
+            {/* Sidebar */}
             <aside className="profile-sidebar">
                 <div className="profile-photo-wrapper">
-                    <img
-                        src={profile?.logo || "/default-company.png"}
-                        alt="Şirkət loqosu"
-                        className="profile-photo"
-                    />
-                    <button
-                        className="upload-icon"
-                        onClick={() => imageInputRef.current.click()}
-                        title="Profil şəklini dəyiş"
-                    >
-                        <FaCamera />
-                    </button>
+                    {profile.profilePic ? (
+                        <img
+                            src={`http://localhost:5000/uploads/profile-pics/${profile.profilePic}`}
+                            alt="Profile"
+                            className="profile-photo"
+                        />
+                    ) : (
+                        <div className="profile-photo-empty">🏢</div>
+                    )}
+                    <button className="photo-upload-icon" onClick={() => imageRef.current.click()}>+</button>
                     <input
+                        ref={imageRef}
                         type="file"
                         accept="image/*"
-                        ref={imageInputRef}
                         style={{ display: "none" }}
                         onChange={handleImageChange}
                     />
                 </div>
 
-                <h2 className="name">{profile?.companyName || "Şirkət adı yoxdur"}</h2>
-                <p className="position">{profile?.industry || "Sektor yoxdur"}</p>
+                <h2 className="profile-name">{profile.companyName || "Company Name"}</h2>
 
-                <div className="profile-info-cards">
-                    <div className="info-card">
-                        <span className="label">Email</span>
-                        <span className="value">{user?.email}</span>
+                <div className="info-boxes">
+                    <div className="info-box">
+                        <span className="info-label">Location</span>
+                        <span>{profile.location || "Empty"}</span>
                     </div>
-                    <div className="info-card">
-                        <span className="label">Telefon</span>
-                        <span className="value">{profile?.phone || "Yoxdur"}</span>
+                    <div className="info-box">
+                        <span className="info-label">Phone</span>
+                        <span>{profile.phone || "Empty"}</span>
                     </div>
-                    <div className="info-card">
-                        <span className="label">Şəhər</span>
-                        <span className="value">{profile?.location || "Yoxdur"}</span>
-                    </div>
-                    <div className="info-card">
-                        <span className="label">Vebsayt</span>
-                        <span className="value">{profile?.website || "Yoxdur"}</span>
+                    <div className="info-box">
+                        <span className="info-label">Email</span>
+                        <span>{profile.email || "Empty"}</span>
                     </div>
                 </div>
 
-                <button className="edit-profile-btn" onClick={() => setShowEditModal(true)}>
-                    <FaEdit /> Profili redaktə et
-                </button>
-
-                <button className="logout-btn" onClick={handleLogout}>
-                    <FaSignOutAlt /> Çıxış
-                </button>
+                <button className="btn-edit-profile" onClick={() => setIsEditOpen(true)}>Edit Profile</button>
+                <button className="btn-logout" onClick={handleLogout}>Logout</button>
             </aside>
 
+            {/* Main content */}
             <main className="profile-main-content">
-                <section className="card-section">
-                    <h3 className="card-title">Haqqımızda</h3>
-                    <p>{profile?.description || "Haqqımızda məlumat yoxdur."}</p>
-                </section>
+                <div className="about-box">
+                    <h2 className="about-title">About Us</h2>
+                    <p className={`about-text ${!profile.description?.trim() && "empty"}`}>
+                        {profile.description || "Empty"}
+                    </p>
+                </div>
 
-                <section className="card-section">
-                    <h3 className="card-title">İş Yerləri və Komanda</h3>
-                    <ul>
-                        <li>Əməkdaş sayı: {profile?.teamSize || "Naməlum"}</li>
-                        <li>Remote və ofis rejimli iş imkanı</li>
-                    </ul>
-                </section>
-
-                <section className="card-section">
-                    <div className="card-header">
-                        <h3 className="card-title">Elanlar</h3>
-                        <button className="add-btn" onClick={() => setShowJobModal(true)}>
-                            <FaPlus /> Elan yerləşdir
-                        </button>
+                <div className="job-section">
+                    <div className="job-header">
+                        <h2>Elanlar</h2>
+                        <button className="btn-add-cv" onClick={() => setIsAddJobOpen(true)}>+ Add Job</button>
                     </div>
-
                     <div className="job-list">
-                        {jobList.length === 0 && <p>Elan tapılmadı.</p>}
-                        {jobList.map((job, index) => (
-                            <div className="job-card" key={index}>
-                                {job.imagePreview && (
-                                    <img
-                                        src={job.imagePreview}
-                                        alt="Elan şəkli"
-                                        className="job-image"
-                                    />
-                                )}
-                                <div className="job-details">
-                                    <h4>{job.title}</h4>
-                                    <small>Maaş: {job.salary} AZN</small>
-                                    <p>{job.description}</p>
-                                    <div className="cv-actions">
-                                        <button onClick={() => handleEditJob(index)} title="Redaktə et">
-                                            <FaEdit />
-                                        </button>
-                                        <button onClick={() => handleDeleteJob(index)} title="Sil">
-                                            <FaTrash />
-                                        </button>
+                        {jobs.length === 0 ? (
+                            <p style={{ fontStyle: "italic", color: "gray" }}>Elan yoxdur</p>
+                        ) : (
+                            jobs.map((job) => (
+                                <div key={job._id} className="job-card">
+                                    <div className="job-info">
+                                        <h3>{job.title}</h3>
+                                        <p><strong>Company:</strong> {profile.companyName || "—"}</p>
+                                        <p><strong>Location:</strong> {job.location || "Remote"}</p>
+                                        <p><strong>Salary:</strong> {job.salary || "—"}</p>
+                                        <p>{job.description}</p>
+                                    </div>
+                                    <div className="job-card-actions">
+                                        <button onClick={() => handleEditJobClick(job)}><FaEdit /></button>
+                                        <button onClick={() => handleDeleteJob(job._id)}><FaTrash /></button>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))
+                        )}
                     </div>
-                </section>
+                </div>
             </main>
 
-            {showEditModal && (
-                <EditEmployerProfileModal
-                    open={showEditModal}
-                    onClose={() => setShowEditModal(false)}
-                    profile={profile}
-                    onSave={loadProfile}
-                    userId={user.id}
-                />
-            )}
+            <EditEmployerProfileModal
+                open={isEditOpen}
+                onClose={() => setIsEditOpen(false)}
+                profile={profile}
+                onSave={handleProfileSave}
+                userId={profile._id}
+            />
 
-            {showJobModal && (
-                <AddJobModal
-                    open={showJobModal}
-                    onClose={handleCloseJobModal}
-                    onAdd={handleNewJob}
-                    onUpdate={handleUpdateJob}
-                    editingJob={editingJobData}
-                />
-            )}
+            <AddJobModal
+                open={isAddJobOpen}
+                onClose={() => setIsAddJobOpen(false)}
+                onSave={handleAddJob}
+            />
+
+            <EditJobModal
+                open={editJobModalOpen}
+                job={selectedJob}
+                onClose={() => setEditJobModalOpen(false)}
+                onSave={handleEditJobSave}
+            />
         </div>
     );
 }

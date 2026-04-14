@@ -1,0 +1,15 @@
+/* src/pages/CVDetail.css */
+.cv-detail-container {
+    padding: 40px 20px;
+    max-width: 1000px;
+    margin: auto;
+    text-align: center;
+}
+
+.cv-frame {
+    border: 1px solid #ccc;
+    margin-top: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}

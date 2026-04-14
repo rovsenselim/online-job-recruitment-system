@@ -1,8 +1,8 @@
-// redux/user/userSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 
 let initialState = {
     user: null,
+    token: null,
     isAuthenticated: false,
     role: null,
 };
@@ -12,16 +12,22 @@ let userSlice = createSlice({
     initialState,
     reducers: {
         loginUser: (state, action) => {
-            const payload = action.payload;
+            const { user, token } = action.payload;
+
             state.user = {
-                ...payload,
-                id: payload.id || payload._id, // id problemi çözülür
+                ...user,
+                id: user.id || user._id,
+                fullname: user.fullname || user.name || "",
             };
+
+            state.token = token;
+            state.role = user.role;
             state.isAuthenticated = true;
-            state.role = payload.role;
         },
+
         logoutUser: (state) => {
             state.user = null;
+            state.token = null;
             state.isAuthenticated = false;
             state.role = null;
         },

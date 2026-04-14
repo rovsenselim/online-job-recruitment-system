@@ -1,89 +1,74 @@
-/* src/components/profile/Modal.css */
-
-.modal-backdrop {
+.custom-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
     display: flex;
-    align-items: center;
     justify-content: center;
-    z-index: 999;
+    align-items: center;
+    z-index: 1000;
 }
 
-.modal-box {
-    background-color: white;
-    padding: 2rem;
-    border-radius: 10px;
+.edit-profile-modal {
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
     width: 90%;
-    max-width: 500px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    position: relative;
+    max-width: 420px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
-.modal-box h2 {
-    margin-bottom: 1rem;
-    font-size: 1.5rem;
+.modal-title {
     text-align: center;
+    margin-bottom: 16px;
+    font-size: 20px;
+    font-weight: 600;
 }
 
-.modal-box input,
-.modal-box textarea {
-    width: 100%;
-    margin-bottom: 1rem;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 1rem;
-}
-
-.modal-box textarea {
-    resize: vertical;
-    min-height: 80px;
-}
-
-.modal-box .modal-buttons {
+.edit-profile-form {
     display: flex;
-    justify-content: flex-end;
-    gap: 10px;
+    flex-direction: column;
 }
 
-.modal-box .modal-buttons button {
-    padding: 8px 16px;
+.edit-profile-form label {
+    font-size: 14px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.edit-profile-form input,
+.edit-profile-form textarea {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 16px;
+}
+
+.btn-save {
+    background-color: #28a745;
+    color: white;
     border: none;
-    border-radius: 5px;
+    padding: 8px 16px;
+    border-radius: 6px;
     cursor: pointer;
 }
 
-.modal-box .modal-buttons .save {
-    background-color: #007bff;
-    color: white;
-}
-
-.modal-box .modal-buttons .cancel {
-    background-color: #6c757d;
-    color: white;
-}
-
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-}
-
-.modal-content {
-    background-color: white;
-    padding: 2rem;
-    width: 90%;
-    max-width: 500px;
-    border-radius: 12px;
+.btn-cancel {
+    background-color: #ccc;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
 }

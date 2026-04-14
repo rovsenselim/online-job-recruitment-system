@@ -3,6 +3,7 @@ import userReducer from "../features/userSlice";
 import employeeProfileReducer from "../features/profile/employeeProfileSlice";
 import employerProfileReducer from "../features/profile/employerProfileSlice";
 import favoritesReducer from "../features/favoritesSlice";
+import employerCvReducer from "../features/employerCvSlice";  // <-- yeni slice əlavə olundu
 
 import {
     persistStore,
@@ -22,12 +23,13 @@ const rootReducer = combineReducers({
     employeeProfile: employeeProfileReducer,
     employerProfile: employerProfileReducer,
     favorites: favoritesReducer,
+    employerCv: employerCvReducer,  // <-- yeni slice buraya əlavə edildi
 });
 
 const persistConfig = {
     key: "root",
     storage,
-    whitelist: ["user"], // yalnız user reducer persist olunur
+    whitelist: ["user"], // Yalnız user slice localStorage-da qalacaq
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -37,6 +39,7 @@ const store = configureStore({
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
             serializableCheck: {
+                // redux-persist əməliyyatlarını serializable yoxlanışından istisna et
                 ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
             },
         }),

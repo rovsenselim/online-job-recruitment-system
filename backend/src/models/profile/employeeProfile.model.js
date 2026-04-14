@@ -1,34 +1,31 @@
 import mongoose from "mongoose";
 
-const employeeProfileSchema = new mongoose.Schema({
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
-        unique: true,
-    },
+// CV sub-schema
+const cvSchema = new mongoose.Schema({
     fullname: { type: String, default: "" },
-    phone: { type: String, default: "" },
+    profession: { type: String, default: "" },
+    filename: { type: String, required: true },
+    path: { type: String, required: true }
+});
+
+// Employee Profile Schema
+const employeeProfileSchema = new mongoose.Schema({
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true, unique: true },
+    fullname: { type: String, default: "" },
+    profession: { type: String, default: "" },
+    age: { type: Number, default: null },
     location: { type: String, default: "" },
+    phone: { type: String, default: "" },
+    email: { type: String, default: "" },
     experience: { type: String, default: "" },
-    clients: { type: Number, default: 0 },
-    skills: { type: [String], default: [] },
-    description: { type: String, default: "" },  // <-- Əlavə olundu
-    profilePic: { type: String, default: "" },
-    cvs: { type: [String], default: [] },
-    cvForms: {
-        type: [
-            {
-                company: { type: String, default: "" },
-                position: { type: String, default: "" },
-                startDate: { type: String, default: "" },
-                endDate: { type: String, default: "" },
-                description: { type: String, default: "" }
-            }
-        ],
-        default: []
-    }
+    skills: {
+        type: [String],
+        default: [],
+        set: v => Array.isArray(v) ? v : [v]
+    },
+    description: { type: String, default: "" },
+    cvs: { type: [cvSchema], default: [] },
+    profilePic: { type: String, default: null }
 }, { timestamps: true });
 
-const EmployeeProfile = mongoose.model("EmployeeProfile", employeeProfileSchema);
-export default EmployeeProfile;
+export default mongoose.model("EmployeeProfile", employeeProfileSchema);

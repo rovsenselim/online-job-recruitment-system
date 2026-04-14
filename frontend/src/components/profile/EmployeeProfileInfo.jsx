@@ -1,204 +1,267 @@
-// src/components/profile/EmployeeProfileInfo.jsx
-
-import React, { useEffect, useRef, useState } from "react";
-import "./EmployerProfileInfo.css";
-import { FaCamera, FaEdit, FaSignOutAlt, FaPlus, FaTrash } from "react-icons/fa";
-import { useDispatch, useSelector } from "react-redux";
-import { logoutUser } from "../../redux/features/userSlice";
-import { useNavigate } from "react-router-dom";
-import {
-    getEmployeeProfile,
-    uploadEmployeePhoto,
-    uploadCV
-} from "../../services/profileAPI";
+import React, { useRef, useState, useEffect } from "react";
+import axios from "axios"; // 🔹 Axios burada import olunmalıdır
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
+import {
+    getMyEmployeeProfile,
+    updateEmployeeProfile,
+    uploadCV,
+    deleteCV,
+} from "../../services/profileService";
+import AddCVModal from "./AddCvModal";
 import EditEmployeeProfileModal from "./EditEmployeeProfileModal";
+import "./EmployeeProfileInfo.css";
 
-function EmployeeProfileInfo() {
-    let dispatch = useDispatch();
-    let navigate = useNavigate();
-    let { user } = useSelector((state) => state.user); // Redux içindəki user
-    let [profile, setProfile] = useState(null);
-    let [showEditModal, setShowEditModal] = useState(false);
-    let [cvList, setCvList] = useState([]);
+function EmployeeProfileInfo({ profile: initialProfile, setProfile, token, onLogout }) {
+    const [isLoading, setIsLoading] = useState(true);
+    const [isEditOpen, setIsEditOpen] = useState(false);
+    const [isCVModalOpen, setIsCVModalOpen] = useState(false);
+    const imageRef = useRef(null);
 
-    let imageInputRef = useRef(null);
+    const [profileData, setProfileData] = useState(initialProfile);
 
+    // ================= PROFİLİ ÇƏK =================
     useEffect(() => {
-        if (user?.id) {
-            loadProfile();
-        }
-    }, [user]);
+        const fetchProfile = async () => {
+            if (initialProfile) {
+                setProfileData(initialProfile);
+                setIsLoading(false);
+                return;
+            }
 
-    let loadProfile = async () => {
+            try {
+                const { data } = await getMyEmployeeProfile(token);
+                setProfileData(data.profile);
+                setProfile(data.profile);
+            } catch (err) {
+                console.error(err);
+                toast.error("Profil tapılmadı");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchProfile();
+    }, [initialProfile, token, setProfile]);
+
+    // ================= PROFİL ŞƏKLİ YÜKLƏ – DƏYİŞİB DÜZGÜN VERSİYA =================
+    const handleImageChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file || !profileData?._id) return;
+
+        const formData = new FormData();
+        formData.append("profilePic", file); // 🔹 Key mütləq "profilePic"
+
         try {
-            let res = await getEmployeeProfile(user.id);
-            setProfile(res.profile); // ⚠️ burada res.data.profile yox, res.profile
-            setCvList(res.profile?.cvs || []);
+            const res = await axios.post(
+                "http://localhost:5000/api/profile/employee/me/profile-pic",
+                formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        // Content-Type təyin etmə! Axios özü təyin edəcək
+                    },
+                }
+            );
+
+            setProfileData((prev) => ({
+                ...prev,
+                profilePic: res.data.profilePic,
+            }));
+
+            setProfile((prev) => ({
+                ...prev,
+                profilePic: res.data.profilePic,
+            }));
+
+            toast.success("Profil şəkli yükləndi");
         } catch (err) {
-            console.error("Profil yüklənmədi:", err);
-            toast.error("Profil tapılmadı");
+            console.error("Şəkil yüklənmədi", err);
+            toast.error("Şəkil yüklənmədi");
         }
     };
 
-    let handleLogout = () => {
-        dispatch(logoutUser());
-        navigate("/login");
-    };
-
-    let handleImageChange = async (e) => {
-        let file = e.target.files[0];
-        if (file) {
-            let formData = new FormData();
-            formData.append("photo", file);
-
-            try {
-                await uploadEmployeePhoto(user.id, formData);
-                toast.success("Şəkil yükləndi");
-                loadProfile();
-            } catch (err) {
-                toast.error("Şəkil əlavə olunarkən xəta baş verdi");
-                console.error("Şəkil yüklənmə xətası:", err);
-            }
+    // ================= PROFİL REDAKTƏ =================
+    const handleProfileSave = async (updatedData) => {
+        try {
+            const { data } = await updateEmployeeProfile(updatedData, token);
+            setProfileData(data.profile);
+            setProfile(data.profile);
+            toast.success("Profil yeniləndi");
+        } catch (err) {
+            console.error(err);
+            toast.error("Profil yenilənmədi");
+        } finally {
+            setIsEditOpen(false);
         }
     };
 
-    let handleCVUpload = async (e) => {
-        let file = e.target.files[0];
-        if (file) {
-            let formData = new FormData();
-            formData.append("cv", file);
+    // ================= CV ƏLAVƏ ET =================
+    const handleAddCV = async (newCV) => {
+        const formData = new FormData();
+        formData.append("cv", newCV.file);
+        formData.append("fullname", newCV.fullname);
+        formData.append("profession", newCV.profession);
 
-            try {
-                let res = await uploadCV(user.id, formData);
-                toast.success("CV uğurla yükləndi");
-                setCvList(res.cvs); // ⚠️ Düz mapping
-                loadProfile();
-            } catch (err) {
-                toast.error("CV yüklənərkən xəta baş verdi");
-                console.error("CV upload error:", err);
-            }
+        try {
+            const { data } = await uploadCV(formData, token);
+            setProfileData((prev) => ({ ...prev, cvs: data.cvs }));
+            setProfile((prev) => ({ ...prev, cvs: data.cvs }));
+            toast.success("CV əlavə olundu");
+        } catch (err) {
+            console.error(err);
+            toast.error("CV əlavə olunmadı");
         }
     };
+
+    // ================= CV SİL =================
+    const handleDeleteCV = async (filename) => {
+        try {
+            await deleteCV(filename, token);
+            setProfileData((prev) => ({
+                ...prev,
+                cvs: prev.cvs.filter((cv) => cv.filename !== filename),
+            }));
+            setProfile((prev) => ({
+                ...prev,
+                cvs: prev.cvs.filter((cv) => cv.filename !== filename),
+            }));
+            toast.success("CV silindi");
+        } catch (err) {
+            console.error(err);
+            toast.error("CV silinmədi");
+        }
+    };
+
+    if (isLoading) return <p className="center">Yüklənir...</p>;
+    if (!profileData) return <p className="center">Profil tapılmadı</p>;
 
     return (
-        <div className="employer-profile-page">
+        <div className="profile-container">
             <aside className="profile-sidebar">
                 <div className="profile-photo-wrapper">
                     <img
                         src={
-                            profile?.image
-                                ? `http://localhost:5000/uploads/profile-pics/${profile.image}`
-                                : "/default-avatar.png"
+                            profileData.profilePic
+                                ? `http://localhost:5000${profileData.profilePic}`
+                                : "/default-profile.png"
                         }
-                        alt="Profil şəkli"
+                        alt="Profile"
                         className="profile-photo"
+                        onError={(e) => (e.target.src = "/default-profile.png")}
                     />
+
                     <button
-                        className="upload-icon"
-                        onClick={() => imageInputRef.current.click()}
+                        className="photo-upload-icon"
+                        onClick={() => imageRef.current.click()}
                     >
-                        <FaCamera />
+                        +
                     </button>
+
                     <input
                         type="file"
+                        ref={imageRef}
                         accept="image/*"
-                        ref={imageInputRef}
-                        style={{ display: "none" }}
+                        hidden
                         onChange={handleImageChange}
                     />
                 </div>
 
-                <h2 className="name">{profile?.fullname || "Ad soyad yoxdur"}</h2>
-                <p className="position">{profile?.profession || "Peşə yoxdur"}</p>
+                <h2 className="profile-name">
+                    {profileData.fullname || "Məlumat yoxdur"}
+                </h2>
 
-                <div className="profile-info-cards">
-                    <div className="info-card">
-                        <span className="label">Email</span>
-                        <span className="value">{user?.email}</span>
+                <div className="info-boxes">
+                    <div className="info-box">
+                        <span className="info-label">Email</span>
+                        <span>{profileData.email || "Məlumat yoxdur"}</span>
                     </div>
-                    <div className="info-card">
-                        <span className="label">Telefon</span>
-                        <span className="value">{profile?.phone || "Yoxdur"}</span>
+                    <div className="info-box">
+                        <span className="info-label">Peşə</span>
+                        <span>{profileData.profession || "Məlumat yoxdur"}</span>
                     </div>
-                    <div className="info-card">
-                        <span className="label">Şəhər</span>
-                        <span className="value">{profile?.location || "Yoxdur"}</span>
+                    <div className="info-box">
+                        <span className="info-label">Yaş</span>
+                        <span>{profileData.age || "Məlumat yoxdur"}</span>
+                    </div>
+                    <div className="info-box">
+                        <span className="info-label">Yer</span>
+                        <span>{profileData.location || "Məlumat yoxdur"}</span>
+                    </div>
+                    <div className="info-box">
+                        <span className="info-label">Telefon</span>
+                        <span>{profileData.phone || "Məlumat yoxdur"}</span>
                     </div>
                 </div>
 
-                <button className="edit-profile-btn" onClick={() => setShowEditModal(true)}>
-                    <FaEdit /> Profili redaktə et
+                <button
+                    className="btn-edit-profile"
+                    onClick={() => setIsEditOpen(true)}
+                >
+                    Edit Profile
                 </button>
 
-                <button className="logout-btn" onClick={handleLogout}>
-                    <FaSignOutAlt /> Çıxış
+                <button className="btn-logout" onClick={onLogout}>
+                    Logout
                 </button>
             </aside>
 
             <main className="profile-main-content">
-                <section className="card-section">
-                    <h3 className="card-title">Haqqımda</h3>
-                    <p>{profile?.about || "Haqqımda məlumat yoxdur."}</p>
-                </section>
+                <div className="about-box">
+                    <h2 className="about-title">Haqqında</h2>
+                    <p className="about-text">
+                        {profileData.description || "Məlumat yoxdur"}
+                    </p>
+                </div>
 
-                <section className="card-section">
-                    <div className="card-header">
-                        <h3 className="card-title">CV-lər</h3>
-                        <label className="add-btn">
-                            <FaPlus /> CV əlavə et
-                            <input
-                                type="file"
-                                accept=".pdf"
-                                style={{ display: "none" }}
-                                onChange={handleCVUpload}
-                            />
-                        </label>
+                <div className="cv-section">
+                    <div className="cv-section-header">
+                        <button
+                            className="btn-add-cv"
+                            onClick={() => setIsCVModalOpen(true)}
+                        >
+                            CV əlavə et
+                        </button>
                     </div>
 
-                    <div className="job-list">
-                        {cvList.map((cv, index) => (
-                            <div className="job-card" key={index}>
-                                <img
-                                    src="/pdf-icon.png"
-                                    alt="CV PDF"
-                                    className="job-image"
-                                />
-                                <div className="job-details">
-                                    <h4>{profile?.fullname || "Naməlum istifadəçi"}</h4>
-                                    <small>Email: {user?.email}</small>
-                                    <p>CV: {cv}</p>
-                                    <a
-                                        href={`http://localhost:5000/uploads/cvs/${cv}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="download-link"
+                    <div className="cv-grid">
+                        {profileData.cvs?.length ? (
+                            profileData.cvs.map((cv) => (
+                                <div key={cv.filename} className="cv-card">
+                                    <Link
+                                        to={`/cv-detail/${encodeURIComponent(cv.filename)}`}
+                                        className="cv-link"
                                     >
-                                        Yüklə
-                                    </a>
-                                </div>
-                                <div className="cv-actions">
-                                    <button onClick={() => {
-                                        toast.info("CV silmək üçün backenddə DELETE endpoint çağırılmalıdır");
-                                    }}>
-                                        <FaTrash />
+                                        <p className="cv-fullname">{cv.fullname}</p>
+                                        <p className="cv-profession">{cv.profession}</p>
+                                    </Link>
+
+                                    <button
+                                        className="delete-cv-btn"
+                                        onClick={() => handleDeleteCV(cv.filename)}
+                                    >
+                                        Sil
                                     </button>
                                 </div>
-                            </div>
-                        ))}
+                            ))
+                        ) : (
+                            <p className="center">Hələ CV yoxdur</p>
+                        )}
                     </div>
-                </section>
+                </div>
             </main>
 
-            {showEditModal && (
-                <EditEmployeeProfileModal
-                    open={showEditModal}
-                    onClose={() => setShowEditModal(false)}
-                    profile={profile}
-                    onSave={loadProfile}
-                    userId={user?.id}
-                />
-            )}
+            <AddCVModal
+                open={isCVModalOpen}
+                onClose={() => setIsCVModalOpen(false)}
+                onSave={handleAddCV}
+            />
+
+            <EditEmployeeProfileModal
+                open={isEditOpen}
+                onClose={() => setIsEditOpen(false)}
+                profile={profileData}
+                onSave={handleProfileSave}
+            />
         </div>
     );
 }

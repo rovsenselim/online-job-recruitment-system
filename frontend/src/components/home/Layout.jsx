@@ -1,22 +1,43 @@
-import React from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
-import Footer from '../footer/Footer';
-import EmployeeNavbar from './navbar/EmployeeNavbar';
-import EmployerNavbar from './navbar/EmployerNavbar';
+import React from "react";
+import { Outlet, useLocation } from "react-router-dom";
+import Footer from "../footer/Footer";
+import EmployeeNavbar from "./navbar/EmployeeNavbar";
+import EmployerNavbar from "./navbar/EmployerNavbar";
+import { useSelector } from "react-redux";
 
 const Layout = () => {
-    let location = useLocation();
+    const { isAuthenticated } = useSelector((state) => state.user);
+    const location = useLocation();
 
-    // Yolun içində employer varsa employer navbar göstər
-    let isEmployer = location.pathname.includes("employer");
-    let isEmployee = location.pathname.includes("employee");
+    if (!isAuthenticated) {
+        return (
+            <>
+                <Outlet />
+                <Footer />
+            </>
+        );
+    }
+
+    const path = location.pathname;
+
+    const isEmployeeRoute =
+        path.startsWith("/employee") ||
+        path.includes("/profile/employee") ||
+        path.includes("/jobs");
+
+    const isEmployerRoute =
+        path.startsWith("/employer") ||
+        path.includes("/profile/employer") ||
+        path.includes("/cv");
 
     return (
-        <div>
-            {isEmployer ? <EmployerNavbar /> : <EmployeeNavbar />}
+        <>
+            {isEmployeeRoute && <EmployeeNavbar />}
+            {isEmployerRoute && <EmployerNavbar />}
+
             <Outlet />
             <Footer />
-        </div>
+        </>
     );
 };
 

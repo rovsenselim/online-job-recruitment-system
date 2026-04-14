@@ -38,7 +38,16 @@ const EmployeeHomeContent = () => {
         let fetchJobs = async () => {
             try {
                 let data = await getAllJobs();
-                setJobs(data.jobs);
+
+                // Konsola yazdır - ilk iş elanı nümunəsi
+                console.log("Jobs API Response sample:", data.jobs[0]);
+
+                // Yalnız array yoxlayıb state-ə əlavə et
+                if (Array.isArray(data.jobs)) {
+                    setJobs(data.jobs);
+                } else {
+                    setJobs([]);
+                }
             } catch (err) {
                 console.error("Failed to fetch jobs:", err);
             }
@@ -100,8 +109,7 @@ const EmployeeHomeContent = () => {
                     <div className="filter-wrapper">
                         <h3>Filter Jobs</h3>
 
-                        {/* Filter groups - eyni kimi qalsın */}
-                        {/* ... əvvəlki filter kodları ... */}
+                        {/* ... filter elements ... */}
 
                         <div className="filter-group">
                             <label>Job Type</label>
@@ -210,7 +218,10 @@ const EmployeeHomeContent = () => {
                                         <span className="tag">{job.location}</span>
                                     </div>
                                     <button
-                                        onClick={() => navigate(`/job/${job._id}`)}
+                                        onClick={() => {
+                                            console.log("Clicked job _id:", job._id);
+                                            navigate(`/job/${job._id}`);
+                                        }}
                                         className="icon-btn"
                                     >
                                         Details

@@ -1,66 +1,90 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useParams, useNavigate } from "react-router-dom";
 import "./JobDetail.css";
 
-const JobDetails = () => {
-    let { id } = useParams();
-    let navigate = useNavigate();
-    let [job, setJob] = useState(null);
-    let [employer, setEmployer] = useState(null);
+const JobDetail = () => {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const [job, setJob] = useState(null);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        let fetchJob = async () => {
+        const fetchJob = async () => {
             try {
-                let res = await axios.get(`http://localhost:5000/api/jobs/${id}`);
-                setJob(res.data.job);
-
-                // 🟡 Elanı yerləşdirən işverənin e-mailini tapmaq üçün:
-                let userId = res.data.job.postedBy;
-                let userRes = await axios.get(`http://localhost:5000/api/auth/user/${userId}`);
-                setEmployer(userRes.data.user);
+                const response = await axios.get(`http://localhost:5000/api/jobs/${id}`);
+                setJob(response.data);
             } catch (err) {
-                console.error("❌ Error fetching job:", err);
+                setError("Job tapılmadı və ya serverdə xəta baş verdi");
             }
         };
+
         fetchJob();
     }, [id]);
 
-    if (!job) return <p className="loading">Loading job details...</p>;
+    if (error) return <div className="loading">{error}</div>;
+    if (!job) return <div className="loading">Yüklənir...</div>;
 
     return (
         <div className="detail-wrapper">
             <div className="detail-card">
-                <div className="detail-header">
+                <header className="detail-header">
                     <h2>{job.title}</h2>
                     <p className="detail-company">{job.company}</p>
-                </div>
+                </header>
 
                 <div className="detail-grid">
-                    <div className="detail-box"><strong>Location:</strong> {job.location}</div>
-                    <div className="detail-box"><strong>Category:</strong> {job.category}</div>
-                    <div className="detail-box"><strong>Type:</strong> {job.jobType}</div>
-                    <div className="detail-box"><strong>Salary:</strong> {job.salary} AZN</div>
-                    <div className="detail-box"><strong>Posted:</strong> {new Date(job.createdAt).toLocaleDateString()}</div>
+                    <div className="detail-box">
+                        <strong>Əlavə edən ID:</strong>
+                        <br />
+                        {job.postedBy}
+                    </div>
+
+                    <div className="detail-box">
+                        <strong>Əlavə olundu:</strong>
+                        <br />
+                        {new Date(job.createdAt).toLocaleDateString()}
+                    </div>
+
+                    <div className="detail-box">
+                        <strong>Yerləşmə:</strong>
+                        <br />
+                        {job.location || "Məlumat yoxdur"}
+                    </div>
+
+                    <div className="detail-box">
+                        <strong>Kateqoriya:</strong>
+                        <br />
+                        {job.category || "Məlumat yoxdur"}
+                    </div>
+
+                    <div className="detail-box">
+                        <strong>İş növü:</strong>
+                        <br />
+                        {job.jobType || "Məlumat yoxdur"}
+                    </div>
+
+                    <div className="detail-box">
+                        <strong>Əmək haqqı:</strong>
+                        <br />
+                        {job.salary ? `${job.salary} AZN` : "Məlumat yoxdur"}
+                    </div>
                 </div>
 
                 <div className="description-box">
-                    <h4>Job Description</h4>
-                    <p>{job.description || "No description provided."}</p>
+                    <h4>Təsvir</h4>
+                    <p>{job.description}</p>
                 </div>
 
-                {employer && (
-                    <div className="employer-box">
-                        <p><strong>Employer Email:</strong> {employer.email}</p>
-                    </div>
-                )}
-
                 <div className="detail-actions">
-                    <button className="back-btn" onClick={() => navigate(-1)}>← Back</button>
+                    <button className="back-btn" onClick={() => navigate(-1)}>
+                        Geri
+                    </button>
+
                 </div>
             </div>
         </div>
     );
 };
 
-export default JobDetails;
+export default JobDetail;

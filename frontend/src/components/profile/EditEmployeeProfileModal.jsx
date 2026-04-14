@@ -1,82 +1,98 @@
 import React, { useState, useEffect } from "react";
-import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    Button,
-    TextField
-} from "@mui/material";
-import { updateEmployeeProfile } from "../../services/profileAPI";
-import { toast } from "react-toastify";
+import "./EditEmployeeProfileModal.css";
 
-export default function EditEmployeeProfileModal({ open, onClose, profile, onSave }) {
+function EditEmployeeProfileModal({ open, onClose, profile, onSave }) {
     const [formData, setFormData] = useState({
         fullname: "",
-        phone: "",
+        profession: "",
+        age: "",
         location: "",
-        experience: "",
-        skills: "",
+        phone: "",
+        email: "",
         description: ""
     });
 
     useEffect(() => {
-        if (profile) {
+        if (profile && open) {
             setFormData({
                 fullname: profile.fullname || "",
-                phone: profile.phone || "",
+                profession: profile.profession || "",
+                age: profile.age || "",
                 location: profile.location || "",
-                experience: profile.experience || "",
-                skills: profile.skills?.join(", ") || "",
-                description: profile.description || "",
+                phone: profile.phone || "",
+                email: profile.email || "",
+                description: profile.description || ""
             });
         }
-    }, [profile]);
+    }, [profile, open]);
 
-    const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
-
-    const handleSubmit = async () => {
-        const dataToSend = {
-            ...formData,
-            skills: formData.skills.split(",").map(s => s.trim())
-        };
-
-        try {
-            await updateEmployeeProfile(profile.userId, dataToSend);
-            toast.success("Profil uğurla yeniləndi");
-            onSave();
-            onClose();
-        } catch (err) {
-            console.error("Profil yenilənərkən xəta:", err);
-            toast.error("Profil yenilənərkən xəta baş verdi");
-        }
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSave(formData);
+        onClose();
+    };
+
+    if (!open) return null;
+
     return (
-        <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-            <DialogTitle>Profil Redaktə</DialogTitle>
-            <DialogContent>
-                {["fullname", "phone", "location", "experience", "skills", "description"].map(name => (
-                    <TextField
-                        key={name}
-                        margin="dense"
-                        label={name === "fullname" ? "Ad Soyad"
-                            : name === "experience" ? "Təcrübə"
-                                : name === "description" ? "Əlavə"
-                                    : name.charAt(0).toUpperCase() + name.slice(1)}
-                        name={name}
-                        value={formData[name]}
-                        onChange={handleChange}
-                        fullWidth
-                        multiline={name === "description"}
-                        rows={name === "description" ? 3 : 1}
-                    />
-                ))}
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={onClose} color="error">Ləğv et</Button>
-                <Button onClick={handleSubmit} color="primary">Yadda saxla</Button>
-            </DialogActions>
-        </Dialog>
+        <div className="custom-modal-overlay" onClick={onClose}>
+            <div className="edit-profile-modal" onClick={(e) => e.stopPropagation()}>
+                <h2 className="modal-title">Profili Redaktə Et</h2>
+
+                <form onSubmit={handleSubmit} className="edit-profile-form">
+                    <label>
+                        Ad Soyad
+                        <input name="fullname" value={formData.fullname} onChange={handleChange} />
+                    </label>
+
+                    <label>
+                        Peşə
+                        <input name="profession" value={formData.profession} onChange={handleChange} />
+                    </label>
+
+                    <label>
+                        Yaş
+                        <input type="number" name="age" value={formData.age} onChange={handleChange} />
+                    </label>
+
+                    <label>
+                        Yer
+                        <input name="location" value={formData.location} onChange={handleChange} />
+                    </label>
+
+                    <label>
+                        Telefon
+                        <input name="phone" value={formData.phone} onChange={handleChange} />
+                    </label>
+
+                    <label>
+                        Email
+                        <input type="email" name="email" value={formData.email} onChange={handleChange} />
+                    </label>
+
+                    <label>
+                        Haqqımda
+                        <textarea
+                            name="description"
+                            value={formData.description}
+                            onChange={handleChange}
+                            rows="4"
+                        />
+                    </label>
+
+                    <div className="modal-buttons">
+                        <button type="submit" className="btn-save">Yadda saxla</button>
+                        <button type="button" className="btn-cancel" onClick={onClose}>Ləğv et</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     );
 }
+
+export default EditEmployeeProfileModal;
